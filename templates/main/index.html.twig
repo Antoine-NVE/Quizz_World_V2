@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {% for category in categories %}
+    <div class="card col-4 p-2">
+      <img src="{{ asset('img/' ~ category.image) }}" class="card-img-top" alt="{{ category.title }}">
+      <div class="card-body">
+        <h5 class="card-title mb-4">{{ category.title }}</h5>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-4">
+              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn btn-primary w-100">Facile</a>
+            </div>
+            <div class="col-4">
+              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn btn-primary w-100">Moyen</a>
+            </div>
+            <div class="col-4">
+              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn btn-primary w-100">Difficile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}
