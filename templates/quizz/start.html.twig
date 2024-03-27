@@ -9,6 +9,22 @@
   <h1>{{ category.title }}
     - Niveau
     {{ questionnaire.difficulty }}</h1>
+  <h5>Question n°{{ number }}
+    :
+    {{ question.question }}</h5>
+  {{ form_start(quizzForm)}}
+  {{ form_row(quizzForm.0, {label: propositions[0].proposition}) }}
+  {{ form_row(quizzForm.1, {label: propositions[1].proposition}) }}
+  {{ form_row(quizzForm.2, {label: propositions[2].proposition}) }}
+  {{ form_row(quizzForm.3, {label: propositions[3].proposition}) }}
+  {{ form_end(quizzForm) }}
 
-  <h5>{{ question.question }}</h5>
+  {% if next %}
+    {% if number == 10 %}
+      <a class="btn btn-primary" href="{{ path('app_quizz_end', {slug: category.slug, difficulty: questionnaire.difficulty}) }}">Suivant</a>
+    {% else %}
+      <a class="btn btn-primary" href="{{ path('app_quizz_start', {slug: category.slug, difficulty: questionnaire.difficulty, number: number + 1}) }}">Suivant</a>
+    {% endif %}
+  {% endif %}
+
 {% endblock %}
