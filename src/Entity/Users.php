@@ -38,7 +38,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[ORM\Column]
-    private ?bool $is_verified = null;
+    private bool $is_verified = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
