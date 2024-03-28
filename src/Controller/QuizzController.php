@@ -20,16 +20,12 @@ class QuizzController extends AbstractController
     public function index(string $slug, string $difficulty, CategoriesRepository $categoriesRepository, QuestionnairesRepository $questionnairesRepository, Request $request): Response
     {
         $category = $categoriesRepository->findOneBy(['slug' => $slug]);
-        if (!$category) {
-            return $this->redirectToRoute('app_main');
-        }
+        if (!$category) return $this->redirectToRoute('app_main');
+
         $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
-        if (!$questionnaire) {
-            return $this->redirectToRoute('app_main');
-        }
+        if (!$questionnaire) return $this->redirectToRoute('app_main');
 
         $session = $request->getSession();
-
         $session->set('answers', [
             'category' => $category->getSlug(),
             'difficulty' => $questionnaire->getDifficulty()
@@ -38,15 +34,34 @@ class QuizzController extends AbstractController
         return $this->render('quizz/index.html.twig', compact('category', 'questionnaire'));
     }
 
-    #[Route('/end', name: 'end')]
-    public function end(Request $request): Response
+    #[Route('/fin', name: 'end')]
+    public function end(string $slug, string $difficulty, CategoriesRepository $categoriesRepository, QuestionnairesRepository $questionnairesRepository, QuestionsRepository $questionsRepository, Request $request): Response
     {
+        $category = $categoriesRepository->findOneBy(['slug' => $slug]);
+        $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
+        $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
+
         $session = $request->getSession();
+        $answers = $session->get('answers');
 
-        $session->set('answers', []);
+        $score = 0;
+        for ($i = 1; $i <= 10; $i++) {
+            if (!array_key_exists($i, $answers)) {
+                return $this->redirectToRoute('app_quizz_start', [
+                    'slug' => $slug,
+                    'difficulty' => $difficulty,
+                    'number' => $i
+                ]);
+            }
 
+            if ($questions[$i - 1]->getAnswer() === $answers[$i]) {
+                $score++;
+            }
+        }
 
-        return $this->render('quizz/end.html.twig');
+        // $session->set('answers', []);
+
+        return $this->render('quizz/end.html.twig', compact('category', 'questionnaire', 'score'));
     }
 
     #[Route('/{number}', name: 'start')]
@@ -66,37 +81,27 @@ class QuizzController extends AbstractController
         $question = $questions[$number - 1];
         $propositions = $propositionsRepository->findBy(['question' => $question->getId()]);
 
-        $quizzForm = $this->createForm(QuizzFormType::class);
-
-        $quizzForm->handleRequest($request);
-
         $session = $request->getSession();
-
         $answers = $session->get('answers');
 
+        $quizzForm = $this->createForm(QuizzFormType::class);
 
+        // Si on a déjà une réponse en session, on bloque toute nouvelle soumission du formulaire
+        if (!array_key_exists($number, $answers)) {
+            $quizzForm->handleRequest($request);
+        }
 
         if ($quizzForm->isSubmitted() && $quizzForm->isValid()) {
-            if ($quizzForm->get('0')->isClicked()) {
-                $choice = 0;
-            } else if ($quizzForm->get('1')->isClicked()) {
-                $choice = 1;
-            } else if ($quizzForm->get('2')->isClicked()) {
-                $choice = 2;
-            } else if ($quizzForm->get('3')->isClicked()) {
-                $choice = 3;
-            };
-
-            if ($question->getAnswer() === $propositions[$choice]->getProposition()) {
-                $is_good = true;
-            } else {
-                $is_good = false;
+            // Permet de capter quel bouton a été cliqué
+            for ($i = 0; $i < 4; $i++) {
+                // Si c'est cliqué, on récupère l'index et on ferme la boucle
+                if ($quizzForm->get((string)$i)->isClicked()) {
+                    $choice = $i;
+                    $i = 4;
+                }
             }
 
-            $answers[$number] = [
-                $propositions[$choice]->getProposition(),
-                $is_good
-            ];
+            $answers[$number] = $propositions[$choice]->getProposition();
 
             $session->set('answers', $answers);
         }

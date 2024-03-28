@@ -12,14 +12,25 @@
   <h5>Question n°{{ number }}
     :
     {{ question.question }}</h5>
-  {{ form_start(quizzForm)}}
-  {{ form_row(quizzForm.0, {label: propositions[0].proposition}) }}
-  {{ form_row(quizzForm.1, {label: propositions[1].proposition}) }}
-  {{ form_row(quizzForm.2, {label: propositions[2].proposition}) }}
-  {{ form_row(quizzForm.3, {label: propositions[3].proposition}) }}
-  {{ form_end(quizzForm) }}
-
-  {% if next %}
+  {% if not next %}
+    {{ form_start(quizzForm)}}
+    <div class="d-flex">
+      {{ form_row(quizzForm.0, {label: propositions[0].proposition}) }}
+      {{ form_row(quizzForm.1, {label: propositions[1].proposition}) }}
+      {{ form_row(quizzForm.2, {label: propositions[2].proposition}) }}
+      {{ form_row(quizzForm.3, {label: propositions[3].proposition}) }}
+    </div>
+    {{ form_end(quizzForm) }}
+  {% else %}
+    <div class="d-flex">
+      <button class="btn {{ question.answer == propositions[0].proposition ? 'btn-success' : answers[number] == propositions[0].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[0].proposition }}</button>
+      <button class="btn {{ question.answer == propositions[1].proposition ? 'btn-success' : answers[number] == propositions[1].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[1].proposition }}</button>
+      <button class="btn {{ question.answer == propositions[2].proposition ? 'btn-success' : answers[number] == propositions[2].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[2].proposition }}</button>
+      <button class="btn {{ question.answer == propositions[3].proposition ? 'btn-success' : answers[number] == propositions[3].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[3].proposition }}</button>
+    </div>
+    {% if question.anecdote %}
+      <p>{{ question.anecdote }}</p>
+    {% endif %}
     {% if number == 10 %}
       <a class="btn btn-primary" href="{{ path('app_quizz_end', {slug: category.slug, difficulty: questionnaire.difficulty}) }}">Suivant</a>
     {% else %}
