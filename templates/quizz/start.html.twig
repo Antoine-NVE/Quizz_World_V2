@@ -12,29 +12,33 @@
   <h5>Question n°{{ number }}
     :
     {{ question.question }}</h5>
+
   {% if not next %}
     {{ form_start(quizzForm)}}
-    <div class="d-flex">
-      {{ form_row(quizzForm.0, {label: propositions[0].proposition}) }}
-      {{ form_row(quizzForm.1, {label: propositions[1].proposition}) }}
-      {{ form_row(quizzForm.2, {label: propositions[2].proposition}) }}
-      {{ form_row(quizzForm.3, {label: propositions[3].proposition}) }}
+    <div class="d-flex flex-column align-items-center mb-2 flex-lg-row">
+      {{ form_widget(quizzForm.0, {label: propositions[0].proposition}) }}
+      {{ form_widget(quizzForm.1, {label: propositions[1].proposition}) }}
+      {{ form_widget(quizzForm.2, {label: propositions[2].proposition}) }}
+      {{ form_widget(quizzForm.3, {label: propositions[3].proposition}) }}
     </div>
     {{ form_end(quizzForm) }}
+
   {% else %}
-    <div class="d-flex">
-      <button class="btn {{ question.answer == propositions[0].proposition ? 'btn-success' : answers[number] == propositions[0].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[0].proposition }}</button>
-      <button class="btn {{ question.answer == propositions[1].proposition ? 'btn-success' : answers[number] == propositions[1].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[1].proposition }}</button>
-      <button class="btn {{ question.answer == propositions[2].proposition ? 'btn-success' : answers[number] == propositions[2].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[2].proposition }}</button>
-      <button class="btn {{ question.answer == propositions[3].proposition ? 'btn-success' : answers[number] == propositions[3].proposition ? 'btn-danger' : 'btn-secondary' }}">{{ propositions[3].proposition }}</button>
+    <div class="d-flex flex-column align-items-center mb-2 flex-lg-row">
+      <button class="btn {{ question.answer == propositions[0].proposition ? 'btn-success' : answers[number] == propositions[0].proposition ? 'btn-danger' : 'btn-secondary' }}  w-100 m-1">{{ propositions[0].proposition }}</button>
+      <button class="btn {{ question.answer == propositions[1].proposition ? 'btn-success' : answers[number] == propositions[1].proposition ? 'btn-danger' : 'btn-secondary' }}  w-100 m-1">{{ propositions[1].proposition }}</button>
+      <button class="btn {{ question.answer == propositions[2].proposition ? 'btn-success' : answers[number] == propositions[2].proposition ? 'btn-danger' : 'btn-secondary' }}  w-100 m-1">{{ propositions[2].proposition }}</button>
+      <button class="btn {{ question.answer == propositions[3].proposition ? 'btn-success' : answers[number] == propositions[3].proposition ? 'btn-danger' : 'btn-secondary' }}  w-100 m-1">{{ propositions[3].proposition }}</button>
     </div>
+
     {% if question.anecdote %}
       <p>{{ question.anecdote }}</p>
     {% endif %}
-    {% if number == 10 %}
-      <a class="btn btn-primary" href="{{ path('app_quizz_end', {slug: category.slug, difficulty: questionnaire.difficulty}) }}">Suivant</a>
-    {% else %}
+
+    {% if number != 10 %}
       <a class="btn btn-primary" href="{{ path('app_quizz_start', {slug: category.slug, difficulty: questionnaire.difficulty, number: number + 1}) }}">Suivant</a>
+    {% else %}
+      <a class="btn btn-primary" href="{{ path('app_quizz_end', {slug: category.slug, difficulty: questionnaire.difficulty}) }}">Fin</a>
     {% endif %}
   {% endif %}
 

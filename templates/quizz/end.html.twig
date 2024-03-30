@@ -9,10 +9,9 @@
   <h1>{{ category.title }}
     - Niveau
     {{ questionnaire.difficulty }}</h1>
-  <img class="mb-4" src="{{ asset('img/' ~ category.image) }}" alt="{{ category.title }}">
 
-  <h5>Votre score :
-    {{ score }}/10</h5>
+  <h4 class="text-center p-5">Votre score :
+    {{ score }}/10</h4>
 
   <a class="btn btn-primary" href="{{ path('app_main') }}">Retour à l'accueil</a>
 

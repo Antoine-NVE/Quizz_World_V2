@@ -14,22 +14,22 @@ class QuizzFormType extends AbstractType
         $builder
             ->add('0', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary w-100 m-1'
                 ]
             ])
             ->add('1', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary w-100 m-1'
                 ]
             ])
             ->add('2', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary w-100 m-1'
                 ]
             ])
             ->add('3', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary w-100 m-1'
                 ]
             ]);
     }
