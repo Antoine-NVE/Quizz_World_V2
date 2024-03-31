@@ -84,7 +84,6 @@ class QuizzController extends AbstractController
         $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
         $question = $questions[$number - 1];
         $propositions = $propositionsRepository->findBy(['question' => $question->getId()]);
-        $next = false; // Permet d'afficher ou non le bouton 'Suivant'
 
         $session = $request->getSession();
         $answers = $session->get('answers');
@@ -114,9 +113,13 @@ class QuizzController extends AbstractController
             // On remplit la session avec la réponse de l'utilisateur
             $answers[$number] = $propositions[$choice]->getProposition();
             $session->set('answers', $answers);
+        }
 
-            // On affiche le bouton 'Suivant'
+        // Si la réponse est stockée en session, on affiche le bouton 'Suivant'
+        if (array_key_exists($number, $answers)) {
             $next = true;
+        } else {
+            $next = false;
         }
 
         return $this->render('quizz/start.html.twig', compact('category', 'questionnaire', 'question', 'propositions', 'quizzForm', 'answers', 'next', 'number'));
