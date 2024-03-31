@@ -14,6 +14,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email.')]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
+#[UniqueEntity(fields: ['pseudo'], message: 'Un compte existe déjà avec ce pseudo.')]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -38,9 +40,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 63)]
     private ?string $pseudo = null;
-
-    #[ORM\Column]
-    private bool $is_verified = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
@@ -136,18 +135,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
-
-        return $this;
-    }
-
-    public function isIsVerified(): ?bool
-    {
-        return $this->is_verified;
-    }
-
-    public function setIsVerified(bool $is_verified): static
-    {
-        $this->is_verified = $is_verified;
 
         return $this;
     }
