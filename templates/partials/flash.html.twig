@@ -1,0 +1,30 @@
+{% for label, messages in app.flashes %}
+  {% for message in messages %}
+    <div class="alert alert-{{ label }} alert-dismissible" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <div class="alert-message">
+        {{ message|raw }}
+      </div>
+    </div>
+  {% endfor %}
+{% endfor %}
+
+{# Affiche un message flash si l'utilisateur n'est pas vérifié #}
+{% if app.user %}
+  {% set isVerified = false %}
+  {% for role in app.user.roles %}
+    {% if role == 'ROLE_VERIFIED' %}
+      {% set isVerified = true %}
+    {% endif %}
+  {% endfor %}
+
+  {% if not isVerified %}
+    <div class="alert alert-warning alert-dismissible" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <div class="alert-message">
+        Votre email n'est pas vérifié,
+        <a href="{{ path('app_resend_verif') }}">renvoyer le lien</a>.
+      </div>
+    </div>
+  {% endif %}
+{% endif %}

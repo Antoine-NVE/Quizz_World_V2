@@ -17,8 +17,9 @@
 
   <body>
     {% include "partials/navbar.html.twig" %}
-
+    
     <div class="container my-4">
+      {% include "partials/flash.html.twig" %}
       <div class="row p-1">
         {% block body %}{% endblock %}
       </div>
