@@ -41,6 +41,11 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/quizz, roles: ROLE_USER }
+
+    role_hierarchy:
+        ROLE_VERIFIED: ROLE_USER
+        ROLE_ADMIN: ROLE_VERIFIED
 
 when@test:
     security:

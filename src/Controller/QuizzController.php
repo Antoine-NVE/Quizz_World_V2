@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/{slug}/{difficulty}', name: 'app_quizz_')]
+#[Route('/quizz/{slug}/{difficulty}', name: 'app_quizz_')]
 class QuizzController extends AbstractController
 {
     #[Route('/', name: 'index')]
