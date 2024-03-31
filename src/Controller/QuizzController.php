@@ -10,24 +10,23 @@ use App\Repository\QuestionsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/quizz/{slug}/{difficulty}', name: 'app_quizz_')]
+#[Route('/{slug}/{difficulty}', name: 'app_quizz_')]
 class QuizzController extends AbstractController
 {
     #[Route('/', name: 'index')]
     public function index(string $slug, string $difficulty, CategoriesRepository $categoriesRepository, QuestionnairesRepository $questionnairesRepository, Request $request): Response
     {
         $category = $categoriesRepository->findOneBy(['slug' => $slug]);
-        if (!$category) return $this->redirectToRoute('app_main');
-
+        if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
         $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
-        if (!$questionnaire) return $this->redirectToRoute('app_main');
+        if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
 
+        // Remplit la session avec le slug et la difficulté
         $session = $request->getSession();
         $session->set('answers', [
-            'category' => $category->getSlug(),
+            'slug' => $category->getSlug(),
             'difficulty' => $questionnaire->getDifficulty()
         ]);
 
@@ -38,14 +37,19 @@ class QuizzController extends AbstractController
     public function end(string $slug, string $difficulty, CategoriesRepository $categoriesRepository, QuestionnairesRepository $questionnairesRepository, QuestionsRepository $questionsRepository, Request $request): Response
     {
         $category = $categoriesRepository->findOneBy(['slug' => $slug]);
+        if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
         $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
+        if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
         $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
+        $score = 0;
 
+        // Récupère les informations de session
         $session = $request->getSession();
         $answers = $session->get('answers');
 
-        $score = 0;
+        // Incrémente le score en fonction des bonnes réponses
         for ($i = 1; $i <= 10; $i++) {
+            // S'assure en premier lieu que l'utilisateur n'a pas zappé une question
             if (!array_key_exists($i, $answers)) {
                 return $this->redirectToRoute('app_quizz_start', [
                     'slug' => $slug,
@@ -58,8 +62,6 @@ class QuizzController extends AbstractController
                 $score++;
             }
         }
-
-        // $session->set('answers', []);
 
         return $this->render('quizz/end.html.twig', compact('category', 'questionnaire', 'score'));
     }
@@ -76,13 +78,21 @@ class QuizzController extends AbstractController
         Request $request
     ): Response {
         $category = $categoriesRepository->findOneBy(['slug' => $slug]);
+        if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
         $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
+        if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
         $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
         $question = $questions[$number - 1];
         $propositions = $propositionsRepository->findBy(['question' => $question->getId()]);
+        $next = false; // Permet d'afficher ou non le bouton 'Suivant'
 
         $session = $request->getSession();
         $answers = $session->get('answers');
+
+        // On vérifie que l'utilisateur n'a pas changé de quizz en cours de route
+        if (($answers['slug'] !== $slug) || ($answers['difficulty'] !== $difficulty)) {
+            return $this->redirectToRoute('app_quizz_index', compact('slug', 'difficulty'));
+        }
 
         $quizzForm = $this->createForm(QuizzFormType::class);
 
@@ -101,13 +111,11 @@ class QuizzController extends AbstractController
                 }
             }
 
+            // On remplit la session avec la réponse de l'utilisateur
             $answers[$number] = $propositions[$choice]->getProposition();
-
             $session->set('answers', $answers);
-        }
 
-        $next = false;
-        if (array_key_exists($number, $answers)) {
+            // On affiche le bouton 'Suivant'
             $next = true;
         }
 
