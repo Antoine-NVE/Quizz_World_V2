@@ -44,8 +44,7 @@ security:
         - { path: ^/quizz, roles: ROLE_USER }
 
     role_hierarchy:
-        ROLE_VERIFIED: ROLE_USER
-        ROLE_ADMIN: ROLE_VERIFIED
+        ROLE_ADMIN: ROLE_USER
 
 when@test:
     security:

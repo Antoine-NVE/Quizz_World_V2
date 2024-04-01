@@ -42,7 +42,10 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private bool $isVerified = false;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(targetEntity: Scores::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $scores;
@@ -50,7 +53,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->scores = new ArrayCollection();
-        $this->created_at = new DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -139,14 +142,26 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getIsVerified(): bool
     {
-        return $this->created_at;
+        return $this->isVerified;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setIsVerified(bool $isVerified): static
     {
-        $this->created_at = $created_at;
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
