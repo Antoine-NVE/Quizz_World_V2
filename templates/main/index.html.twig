@@ -2,14 +2,16 @@
 
 {% block body %}
   {% for category in categories %}
-    <div class="card col-12 col-md-6 col-lg-4 col-xxl-3 p-0">
-      <img src="{{ asset('img/' ~ category.image) }}" class="card-img-top" alt="{{ category.title }}">
-      <div class="card-body">
-        <h5 class="card-title mb-4">{{ category.title }}</h5>
-        <div class="d-flex flex-column align-items-center flex-md-row">
-          <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn btn-primary w-100 m-1">Facile</a>
-          <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn btn-primary w-100 m-1">Moyen</a>
-          <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn btn-primary w-100 m-1">Difficile</a>
+    <div class="col-12 col-md-6 col-lg-4 col-xxl-3 p-1">
+      <div class="card">
+        <img src="{{ asset('img/' ~ category.image) }}" class="card-img-top" alt="{{ category.title }}">
+        <div class="card-body">
+          <h5 class="card-title mb-4">{{ category.title }}</h5>
+          <div class="d-flex flex-column align-items-center flex-md-row">
+            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn btn-primary w-100 m-1">Facile</a>
+            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn btn-primary w-100 m-1">Moyen</a>
+            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn btn-primary w-100 m-1">Difficile</a>
+          </div>
         </div>
       </div>
     </div>
