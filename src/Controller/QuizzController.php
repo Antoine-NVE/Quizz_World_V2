@@ -2,22 +2,33 @@
 
 namespace App\Controller;
 
+use App\Entity\Scores;
 use App\Form\QuizzFormType;
 use App\Repository\CategoriesRepository;
 use App\Repository\PropositionsRepository;
 use App\Repository\QuestionnairesRepository;
 use App\Repository\QuestionsRepository;
+use App\Repository\ScoresRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Route('/quizz/{slug}/{difficulty}', name: 'app_quizz_')]
 class QuizzController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(string $slug, string $difficulty, CategoriesRepository $categoriesRepository, QuestionnairesRepository $questionnairesRepository, Request $request): Response
-    {
+    public function index(
+        string $slug,
+        string $difficulty,
+        CategoriesRepository $categoriesRepository,
+        QuestionnairesRepository $questionnairesRepository,
+        ScoresRepository $scoresRepository,
+        UserInterface $user,
+        Request $request
+    ): Response {
         $category = $categoriesRepository->findOneBy(['slug' => $slug]);
         if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
         $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
@@ -30,12 +41,23 @@ class QuizzController extends AbstractController
             'difficulty' => $questionnaire->getDifficulty()
         ]);
 
-        return $this->render('quizz/index.html.twig', compact('category', 'questionnaire'));
+        $score = $scoresRepository->findOneBy(compact('questionnaire', 'user'));
+
+        return $this->render('quizz/index.html.twig', compact('category', 'questionnaire', 'score'));
     }
 
     #[Route('/fin', name: 'end')]
-    public function end(string $slug, string $difficulty, CategoriesRepository $categoriesRepository, QuestionnairesRepository $questionnairesRepository, QuestionsRepository $questionsRepository, Request $request): Response
-    {
+    public function end(
+        string $slug,
+        string $difficulty,
+        CategoriesRepository $categoriesRepository,
+        QuestionnairesRepository $questionnairesRepository,
+        QuestionsRepository $questionsRepository,
+        ScoresRepository $scoresRepository,
+        Request $request,
+        UserInterface $user,
+        EntityManagerInterface $entityManager
+    ): Response {
         $category = $categoriesRepository->findOneBy(['slug' => $slug]);
         if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
         $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
@@ -47,11 +69,16 @@ class QuizzController extends AbstractController
         $session = $request->getSession();
         $answers = $session->get('answers');
 
+        // Si le tableau n'est pas créé, on renvoit à l'accueil du quizz
+        if (!$answers) {
+            return $this->redirectToRoute('app_quizz_index', compact('slug', 'difficulty'));
+        }
+
         // Incrémente le score en fonction des bonnes réponses
         for ($i = 1; $i <= 10; $i++) {
             // S'assure en premier lieu que l'utilisateur n'a pas zappé une question
             if (!array_key_exists($i, $answers)) {
-                return $this->redirectToRoute('app_quizz_start', [
+                return $this->redirectToRoute('app_quizz_question', [
                     'slug' => $slug,
                     'difficulty' => $difficulty,
                     'number' => $i
@@ -63,10 +90,29 @@ class QuizzController extends AbstractController
             }
         }
 
+        // Insère le score en base
+        $lastScore = $scoresRepository->findOneBy(compact('questionnaire', 'user'));
+
+        // Crée ou modifie le meilleur score
+        if (!$lastScore) {
+            $newScore = new Scores();
+            $newScore->setQuestionnaire($questionnaire);
+            $newScore->setUser($user);
+            $newScore->setScore($score);
+
+            $entityManager->persist($newScore);
+            $entityManager->flush();
+        } elseif ($lastScore->getScore() < $score) {
+            $lastScore->setScore($score);
+
+            $entityManager->persist($lastScore);
+            $entityManager->flush();
+        }
+
         return $this->render('quizz/end.html.twig', compact('category', 'questionnaire', 'score'));
     }
 
-    #[Route('/{number}', name: 'start')]
+    #[Route('/{number}', name: 'question')]
     public function start(
         string $slug,
         string $difficulty,
@@ -87,6 +133,11 @@ class QuizzController extends AbstractController
 
         $session = $request->getSession();
         $answers = $session->get('answers');
+
+        // Si le tableau n'est pas créé, on renvoit à l'accueil du quizz
+        if (!$answers) {
+            return $this->redirectToRoute('app_quizz_index', compact('slug', 'difficulty'));
+        }
 
         // On vérifie que l'utilisateur n'a pas changé de quizz en cours de route
         if (($answers['slug'] !== $slug) || ($answers['difficulty'] !== $difficulty)) {
@@ -122,6 +173,6 @@ class QuizzController extends AbstractController
             $next = false;
         }
 
-        return $this->render('quizz/start.html.twig', compact('category', 'questionnaire', 'question', 'propositions', 'quizzForm', 'answers', 'next', 'number'));
+        return $this->render('quizz/question.html.twig', compact('category', 'questionnaire', 'question', 'propositions', 'quizzForm', 'answers', 'next', 'number'));
     }
 }

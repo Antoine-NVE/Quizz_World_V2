@@ -36,7 +36,7 @@
     {% endif %}
 
     {% if number != 10 %}
-      <a class="btn btn-primary" href="{{ path('app_quizz_start', {slug: category.slug, difficulty: questionnaire.difficulty, number: number + 1}) }}">Suivant</a>
+      <a class="btn btn-primary" href="{{ path('app_quizz_question', {slug: category.slug, difficulty: questionnaire.difficulty, number: number + 1}) }}">Suivant</a>
     {% else %}
       <a class="btn btn-primary" href="{{ path('app_quizz_end', {slug: category.slug, difficulty: questionnaire.difficulty}) }}">Fin</a>
     {% endif %}

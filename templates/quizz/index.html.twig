@@ -10,5 +10,11 @@
     - Niveau
     {{ questionnaire.difficulty }}</h1>
   <img class="mb-4" src="{{ asset('img/' ~ category.image) }}" alt="{{ category.title }}">
-  <a href="{{ path('app_quizz_start', {slug: category.slug, difficulty: questionnaire.difficulty, number: 1}) }}" class="btn btn-primary">Commencer</a>
+
+  {% if score %}
+    <h5>Votre meilleur score sur ce quizz :
+      {{ score.score }}/10</h5>
+  {% endif %}
+
+  <a href="{{ path('app_quizz_question', {slug: category.slug, difficulty: questionnaire.difficulty, number: 1}) }}" class="btn btn-primary">Commencer</a>
 {% endblock %}
