@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\CategoriesRepository;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,15 +28,22 @@ class Categories
     private ?string $image = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(targetEntity: Questionnaires::class, mappedBy: 'category', orphanRemoval: true)]
     private Collection $questionnaires;
 
+    #[ORM\Column]
+    private bool $isActive = false;
+
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Users $user = null;
+
     public function __construct()
     {
         $this->questionnaires = new ArrayCollection();
-        $this->created_at = new DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -83,12 +89,12 @@ class Categories
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -119,6 +125,30 @@ class Categories
                 $questionnaire->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getUser(): ?Users
+    {
+        return $this->user;
+    }
+
+    public function setUser(?Users $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

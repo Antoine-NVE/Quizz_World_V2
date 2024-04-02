@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -50,10 +49,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Scores::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $scores;
 
+    #[ORM\OneToMany(targetEntity: Categories::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $categories;
+
     public function __construct()
     {
         $this->scores = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +193,36 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($score->getUser() === $this) {
                 $score->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Categories>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Categories $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categories $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getUser() === $this) {
+                $category->setUser(null);
             }
         }
 
