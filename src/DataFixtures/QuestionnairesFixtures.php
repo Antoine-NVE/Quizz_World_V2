@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Categories;
 use App\Entity\Questionnaires;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class QuestionnairesFixtures extends Fixture
+class QuestionnairesFixtures extends Fixture implements DependentFixtureInterface
 {
     private const DIFFICULTIES = ['facile', 'moyen', 'difficile'];
 
@@ -16,6 +17,14 @@ class QuestionnairesFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
+        $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
         $this->create($this->getReference('category-' . self::$categoryCounter), self::DIFFICULTIES, $manager);
 
         $manager->flush();
@@ -36,5 +45,10 @@ class QuestionnairesFixtures extends Fixture
         }
 
         self::$categoryCounter++;
+    }
+
+    public function getDependencies()
+    {
+        return [CategoriesFixtures::class];
     }
 }
