@@ -9,7 +9,7 @@
   <h1>{{ category.title }}
     - Niveau
     {{ questionnaire.difficulty }}</h1>
-  <img class="mb-4" src="{{ asset('img/' ~ category.image) }}" alt="{{ category.title }}">
+  <img class="mb-4" src="{{ asset('img/' ~ category.image) }}" alt="{{ category.title }}" style="aspect-ratio: 20/9; object-fit: cover;">
 
   {% if score %}
     <h5>Votre meilleur score sur ce quizz :
