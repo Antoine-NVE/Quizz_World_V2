@@ -150,7 +150,9 @@ class QuizzController extends AbstractController
             // Permet de capter quel bouton a été cliqué
             for ($i = 0; $i < 4; $i++) {
                 // Si c'est cliqué, on récupère l'index et on ferme la boucle
-                if ($quizzForm->get((string)$i)->isClicked()) {
+                /** @var ClickableInterface $button  */
+                $button = $quizzForm->get((string)$i);
+                if ($button->isClicked()) {
                     $choice = $i;
                     $i = 4;
                 }

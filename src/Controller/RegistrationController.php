@@ -100,6 +100,7 @@ class RegistrationController extends AbstractController
     #[Route('/resend-verif', name: 'app_resend_verif')]
     public function resendVerif(UserInterface $user): Response
     {
+        /** @var \App\Entity\Users $user  */
         $this->emailVerifier->sendEmailConfirmation(
             'app_verify_email',
             $user,
