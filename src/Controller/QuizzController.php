@@ -38,8 +38,6 @@ class QuizzController extends AbstractController
             'difficulty' => $questionnaire->getDifficulty()
         ]);
 
-        // $score = $scoresRepository->findOneBy(compact('questionnaire', 'user'));
-
         return $this->render('quizz/index.html.twig', compact('category', 'questionnaire', 'score'));
     }
 

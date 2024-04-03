@@ -8,9 +8,9 @@
         <div class="card-body">
           <h5 class="card-title mb-4">{{ category.title }}</h5>
           <div class="d-flex flex-column align-items-center flex-md-row">
-            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn btn-primary w-100 m-1">Facile</a>
-            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn btn-primary w-100 m-1">Moyen</a>
-            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn btn-primary w-100 m-1">Difficile</a>
+            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn {{ scores[loop.index * 3 - 3] is defined and scores[loop.index * 3 - 3] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Facile</a>
+            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn {{ scores[loop.index * 3 - 2] is defined and scores[loop.index * 3 - 2] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Moyen</a>
+            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn {{ scores[loop.index * 3 - 1] is defined and scores[loop.index * 3 - 1] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Difficile</a>
           </div>
           <small class="d-block text-end">Créé par :
             {{ category.user.pseudo }}</small>

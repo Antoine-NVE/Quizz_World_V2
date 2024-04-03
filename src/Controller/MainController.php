@@ -13,12 +13,22 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function index(CategoriesRepository $categoriesRepository, Request $request): Response
     {
-        $categories = $categoriesRepository->findCompletesAndActives();
+        $scores = [];
+        if ($this->getUser()) {
+            $categories = $categoriesRepository->findCompletesAndActivesWithScores($this->getUser());
+            foreach ($categories as $category) {
+                foreach ($category->getQuestionnaires() as $questionnaire) {
+                    $scores[] = $questionnaire->getScores()[0];
+                }
+            }
+        } else {
+            $categories = $categoriesRepository->findCompletesAndActives();
+        }
 
         // On supprime les potentiels scores stockés en session
         $session = $request->getSession();
         $session->remove('answers');
 
-        return $this->render('main/index.html.twig', compact('categories'));
+        return $this->render('main/index.html.twig', compact('categories', 'scores'));
     }
 }

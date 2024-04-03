@@ -24,10 +24,26 @@ class CategoriesRepository extends ServiceEntityRepository
     public function findCompletesAndActives(): array
     {
         return $this->createQueryBuilder('c')
-            ->select('c')
+            ->select('c', 'u')
+            ->join('c.user', 'u')
             // Sous-requête qui vérifie qu'il y a 30 questions dans la catégorie
             ->andWhere('(SELECT COUNT(q.id) FROM App\Entity\Questions q JOIN q.questionnaire qn2 WHERE qn2.category = c) = 30')
             ->andWhere('c.isActive = true')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCompletesAndActivesWithScores($user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'qn', 's', 'u')
+            ->join('c.questionnaires', 'qn')
+            ->join('c.user', 'u')
+            ->leftJoin('qn.scores', 's', 'WITH', 's.user = :user')
+            // Sous-requête qui vérifie qu'il y a 30 questions dans la catégorie
+            ->andWhere('(SELECT COUNT(q.id) FROM App\Entity\Questions q JOIN q.questionnaire qn2 WHERE qn2.category = c) = 30')
+            ->andWhere('c.isActive = true')
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
     }
