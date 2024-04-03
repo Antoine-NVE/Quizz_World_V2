@@ -53,7 +53,7 @@ class CategoriesRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->select('c', 'qn', 's')
             ->join('c.questionnaires', 'qn')
-            ->join('qn.scores', 's', 'WITH', 's.user = :user')
+            ->leftJoin('qn.scores', 's', 'WITH', 's.user = :user')
             ->andWhere('c.slug = :categorySlug')
             ->andWhere('qn.difficulty = :difficulty')
             // Sous-requête qui vérifie qu'il y a 30 questions dans la catégorie
