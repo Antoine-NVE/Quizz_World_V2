@@ -53,12 +53,19 @@ class QuizzController extends AbstractController
         UserInterface $user,
         EntityManagerInterface $entityManager
     ): Response {
-        $category = $categoriesRepository->findOneBy(['slug' => $slug]);
-        if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
-        $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
-        if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
-        $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
-        $score = 0;
+        // $category = $categoriesRepository->findOneBy(['slug' => $slug]);
+        // if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
+        // $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
+        // if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
+        // $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
+
+        $category = $categoriesRepository->findOneOrNullWithQuestionnaireAndQuestionsAndScore($slug, $difficulty, $this->getUser());
+        if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
+        $questionnaire = $category->getQuestionnaires()[0];
+        $questions = $questionnaire->getQuestions();
+        $bestScore = $questionnaire->getScores()[0];
+
+        // dd($category, $questionnaire, $questions, $bestScore);
 
         // Récupère les informations de session
         $session = $request->getSession();
@@ -70,6 +77,7 @@ class QuizzController extends AbstractController
         }
 
         // Incrémente le score en fonction des bonnes réponses
+        $score = 0;
         for ($i = 1; $i <= 10; $i++) {
             // S'assure en premier lieu que l'utilisateur n'a pas zappé une question
             if (!array_key_exists($i, $answers)) {
@@ -80,29 +88,28 @@ class QuizzController extends AbstractController
                 ]);
             }
 
+            // Incrémente
             if ($questions[$i - 1]->getAnswer() === $answers[$i]) {
                 $score++;
             }
         }
 
-        // Insère le score en base
-        $lastScore = $scoresRepository->findOneBy(compact('questionnaire', 'user'));
-
         // Crée ou modifie le meilleur score
-        if (!$lastScore) {
-            $newScore = new Scores();
-            $newScore->setQuestionnaire($questionnaire);
-            $newScore->setUser($user);
-            $newScore->setScore($score);
+        if (!$bestScore) {
+            $bestScore = new Scores();
+            $bestScore->setQuestionnaire($questionnaire);
+            $bestScore->setUser($user);
+            $bestScore->setScore($score);
 
-            $entityManager->persist($newScore);
+            $entityManager->persist($bestScore);
             $entityManager->flush();
-        } elseif ($lastScore->getScore() < $score) {
-            $lastScore->setScore($score);
+        } elseif ($bestScore->getScore() < $score) {
+            $bestScore->setScore($score);
 
-            $entityManager->persist($lastScore);
+            $entityManager->persist($bestScore);
             $entityManager->flush();
         }
+        $score = $bestScore;
 
         return $this->render('quizz/end.html.twig', compact('category', 'questionnaire', 'score'));
     }
@@ -118,13 +125,11 @@ class QuizzController extends AbstractController
         PropositionsRepository $propositionsRepository,
         Request $request
     ): Response {
-        $category = $categoriesRepository->findOneBy(['slug' => $slug]);
-        if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
-        $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
-        if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
-        $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
-        $question = $questions[$number - 1];
-        $propositions = $propositionsRepository->findBy(['question' => $question->getId()]);
+        $category = $categoriesRepository->findOneOrNullWithQuestionnaireAndQuestionsAndPropositions($slug, $difficulty);
+        if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
+        $questionnaire = $category->getQuestionnaires()[0];
+        $question = $questionnaire->getQuestions()[$number - 1];
+        $propositions = $question->getPropositions();
 
         $session = $request->getSession();
         $answers = $session->get('answers');

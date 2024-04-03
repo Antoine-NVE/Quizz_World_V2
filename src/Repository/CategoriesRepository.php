@@ -48,7 +48,7 @@ class CategoriesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findWithQuestionnaireAndScore($categorySlug, $difficulty, $user)
+    public function findWithQuestionnaireAndScore($categorySlug, $difficulty, $user): ?Categories
     {
         return $this->createQueryBuilder('c')
             ->select('c', 'qn', 's')
@@ -62,6 +62,40 @@ class CategoriesRepository extends ServiceEntityRepository
             ->setParameter('categorySlug', $categorySlug)
             ->setParameter('difficulty', $difficulty)
             ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneOrNullWithQuestionnaireAndQuestionsAndPropositions($slug, $difficulty): ?Categories
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'qn', 'q', 'p')
+            ->join('c.questionnaires', 'qn')
+            ->join('qn.questions', 'q')
+            ->join('q.propositions', 'p')
+            ->andWhere('(SELECT COUNT(q2.id) FROM App\Entity\Questions q2 JOIN q2.questionnaire qn2 WHERE qn2.category = c) = 30') // 30 questions
+            ->andWhere('c.isActive = true')
+            ->andWhere('c.slug = :slug')
+            ->andWhere('qn.difficulty = :difficulty')
+            ->setParameter('slug', $slug)
+            ->setParameter('difficulty', $difficulty)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneOrNullWithQuestionnaireAndQuestionsAndScore($slug, $difficulty, $user): ?Categories
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'qn', 'q', 's')
+            ->join('c.questionnaires', 'qn')
+            ->join('qn.questions', 'q')
+            ->leftJoin('qn.scores', 's')
+            ->andWhere('(SELECT COUNT(q2.id) FROM App\Entity\Questions q2 JOIN q2.questionnaire qn2 WHERE qn2.category = c) = 30') // 30 questions
+            ->andWhere('c.isActive = true')
+            ->andWhere('c.slug = :slug')
+            ->andWhere('qn.difficulty = :difficulty')
+            ->setParameter('slug', $slug)
+            ->setParameter('difficulty', $difficulty)
             ->getQuery()
             ->getOneOrNullResult();
     }
