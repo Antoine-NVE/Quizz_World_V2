@@ -39,6 +39,7 @@ class CategoriesFixtures extends Fixture implements DependentFixtureInterface
         $category->setSlug($this->slugger->slug($category->getTitle())->lower());
         $category->setImage($category->getSlug() . $extension);
         $category->setUser($this->getReference('admin'));
+        $category->setIsActive(true);
 
         $this->addReference('category-' . self::$categoryCounter, $category);
         self::$categoryCounter++;

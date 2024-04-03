@@ -24,15 +24,12 @@ class QuizzController extends AbstractController
         string $slug,
         string $difficulty,
         CategoriesRepository $categoriesRepository,
-        QuestionnairesRepository $questionnairesRepository,
-        ScoresRepository $scoresRepository,
-        UserInterface $user,
         Request $request
     ): Response {
-        $category = $categoriesRepository->findOneBy(['slug' => $slug]);
-        if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
-        $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
-        if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
+        $category = $categoriesRepository->findWithQuestionnaireAndScore($slug, $difficulty, $this->getUser());
+        if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
+        $questionnaire = $category->getQuestionnaires()[0];
+        $score = $questionnaire->getScores()[0];
 
         // Remplit la session avec le slug et la difficulté
         $session = $request->getSession();
@@ -41,7 +38,7 @@ class QuizzController extends AbstractController
             'difficulty' => $questionnaire->getDifficulty()
         ]);
 
-        $score = $scoresRepository->findOneBy(compact('questionnaire', 'user'));
+        // $score = $scoresRepository->findOneBy(compact('questionnaire', 'user'));
 
         return $this->render('quizz/index.html.twig', compact('category', 'questionnaire', 'score'));
     }

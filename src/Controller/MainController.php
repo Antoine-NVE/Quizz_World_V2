@@ -13,7 +13,7 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function index(CategoriesRepository $categoriesRepository, Request $request): Response
     {
-        $categories = $categoriesRepository->findAll();
+        $categories = $categoriesRepository->findCompletesAndActives();
 
         // On supprime les potentiels scores stockés en session
         $session = $request->getSession();
