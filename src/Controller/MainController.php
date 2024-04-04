@@ -14,15 +14,11 @@ class MainController extends AbstractController
     public function index(CategoriesRepository $categoriesRepository, Request $request): Response
     {
         $scores = [];
-        if ($this->getUser()) {
-            $categories = $categoriesRepository->findCompletesAndActivesWithScores($this->getUser());
-            foreach ($categories as $category) {
-                foreach ($category->getQuestionnaires() as $questionnaire) {
-                    $scores[] = $questionnaire->getScores()[0];
-                }
+        $categories = $categoriesRepository->findCompletesAndActivesWithScores($this->getUser());
+        foreach ($categories as $category) {
+            foreach ($category->getQuestionnaires() as $questionnaire) {
+                $scores[] = $questionnaire->getScores()[0];
             }
-        } else {
-            $categories = $categoriesRepository->findCompletesAndActives();
         }
 
         // On supprime les potentiels scores stockés en session

@@ -5,16 +5,11 @@ namespace App\Controller;
 use App\Entity\Scores;
 use App\Form\QuizzFormType;
 use App\Repository\CategoriesRepository;
-use App\Repository\PropositionsRepository;
-use App\Repository\QuestionnairesRepository;
-use App\Repository\QuestionsRepository;
-use App\Repository\ScoresRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Route('/quizz/{slug}/{difficulty}', name: 'app_quizz_')]
 class QuizzController extends AbstractController
@@ -26,7 +21,8 @@ class QuizzController extends AbstractController
         CategoriesRepository $categoriesRepository,
         Request $request
     ): Response {
-        $category = $categoriesRepository->findWithQuestionnaireAndScore($slug, $difficulty, $this->getUser());
+        $user = $this->getUser();
+        $category = $categoriesRepository->findOneOrNullWithQuestionnaireQuestionsPropositionsAndScore($slug, $difficulty, $user);
         if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
         $questionnaire = $category->getQuestionnaires()[0];
         $score = $questionnaire->getScores()[0];
@@ -46,20 +42,11 @@ class QuizzController extends AbstractController
         string $slug,
         string $difficulty,
         CategoriesRepository $categoriesRepository,
-        QuestionnairesRepository $questionnairesRepository,
-        QuestionsRepository $questionsRepository,
-        ScoresRepository $scoresRepository,
         Request $request,
-        UserInterface $user,
         EntityManagerInterface $entityManager
     ): Response {
-        // $category = $categoriesRepository->findOneBy(['slug' => $slug]);
-        // if (!$category) throw $this->createNotFoundException('Catégorie inexistante');
-        // $questionnaire = $questionnairesRepository->findOneBy(['category' => $category->getId(), 'difficulty' => $difficulty]);
-        // if (!$questionnaire) throw $this->createNotFoundException('Difficulté incorrecte');
-        // $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire->getId()]);
-
-        $category = $categoriesRepository->findOneOrNullWithQuestionnaireAndQuestionsAndScore($slug, $difficulty, $this->getUser());
+        $user = $this->getUser();
+        $category = $categoriesRepository->findOneOrNullWithQuestionnaireQuestionsPropositionsAndScore($slug, $difficulty, $user);
         if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
         $questionnaire = $category->getQuestionnaires()[0];
         $questions = $questionnaire->getQuestions();
@@ -120,12 +107,10 @@ class QuizzController extends AbstractController
         string $difficulty,
         int $number,
         CategoriesRepository $categoriesRepository,
-        QuestionnairesRepository $questionnairesRepository,
-        QuestionsRepository $questionsRepository,
-        PropositionsRepository $propositionsRepository,
         Request $request
     ): Response {
-        $category = $categoriesRepository->findOneOrNullWithQuestionnaireAndQuestionsAndPropositions($slug, $difficulty);
+        $user = $this->getUser();
+        $category = $categoriesRepository->findOneOrNullWithQuestionnaireQuestionsPropositionsAndScore($slug, $difficulty, $user);
         if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
         $questionnaire = $category->getQuestionnaires()[0];
         $question = $questionnaire->getQuestions()[$number - 1];
