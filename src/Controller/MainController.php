@@ -14,7 +14,9 @@ class MainController extends AbstractController
     public function index(CategoriesRepository $categoriesRepository, Request $request): Response
     {
         $scores = [];
-        $categories = $categoriesRepository->findCompletesAndActivesWithScores($this->getUser());
+        $result = $categoriesRepository->findCompletesAndActivesWithScores($this->getUser());
+        $categories = $result['data'];
+        // dd($result);
         foreach ($categories as $category) {
             foreach ($category->getQuestionnaires() as $questionnaire) {
                 $scores[] = $questionnaire->getScores()[0];

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Categories;
 use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,9 +23,14 @@ class CategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, Categories::class);
     }
 
-    public function findCompletesAndActivesWithScores(?Users $user = null): array
+    public function findCompletesAndActivesWithScores(?Users $user = null, $page = 1, $limit = 8): array
     {
-        return $this->createQueryBuilder('c')
+        // On multiplie par 3 car il y a 3 questionnaires par catégorie
+        $limit = abs($limit * 3);
+
+        $result = [];
+
+        $query = $this->createQueryBuilder('c')
             ->select('c', 'qn', 's', 'u')
             ->join('c.user', 'u')
             ->join('c.questionnaires', 'qn')
@@ -33,8 +39,25 @@ class CategoriesRepository extends ServiceEntityRepository
             ->andWhere('(SELECT COUNT(q.id) FROM App\Entity\Questions q JOIN q.questionnaire qn2 WHERE qn2.category = c) = 30')
             ->andWhere('c.isActive = true')
             ->setParameter('user', $user)
-            ->getQuery()
-            ->getResult();
+            ->setFirstResult(($page * $limit) - ($limit))
+            ->setMaxResults($limit);
+
+        $paginator = new Paginator($query);
+        $data = $paginator->getQuery()->getResult();
+
+        if (empty($data)) {
+            return $result;
+        }
+
+        // A l'inverse on divise par 3 car le count() ne compte que les catégories
+        $pages = (int)ceil($paginator->count() / ($limit / 3));
+
+        $result['data'] = $data;
+        $result['pages'] = $pages;
+        $result['page'] = $page;
+        $result['$limit'] = $limit;
+
+        return $result;
     }
 
     public function findOneOrNullWithQuestionnaireQuestionsPropositionsAndScore(string $slug, string $difficulty, Users $user): ?Categories
