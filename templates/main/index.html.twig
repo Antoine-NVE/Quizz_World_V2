@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  {% for category in categories %}
+  {% for category in categories.data %}
     <div class="col-12 col-md-6 col-lg-4 col-xxl-3 p-1">
       <div class="card">
         <img src="{{ asset('img/' ~ category.image) }}" class="card-img-top" alt="{{ category.title }}" style="aspect-ratio: 16/9; object-fit: cover;">
@@ -18,4 +18,24 @@
       </div>
     </div>
   {% endfor %}
+
+  <nav aria-label="Navigation catégories accueil">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link {{ categories.page == 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1}) }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {% for i in 1..categories.pages %}
+        <li class="page-item">
+          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i}) }}">{{ i }}</a>
+        </li>
+      {% endfor %}
+      <li class="page-item">
+        <a class="page-link {{ categories.page == categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1}) }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 {% endblock %}

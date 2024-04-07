@@ -23,7 +23,7 @@ class CategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, Categories::class);
     }
 
-    public function findCompletesAndActivesWithScores(?Users $user = null, $page = 1, $limit = 8): array
+    public function findCompletesAndActivesWithScores($page, $limit, ?Users $user = null): array
     {
         // On multiplie par 3 car il y a 3 questionnaires par catégorie
         $limit = abs($limit * 3);

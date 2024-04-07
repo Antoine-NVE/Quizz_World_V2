@@ -13,11 +13,12 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function index(CategoriesRepository $categoriesRepository, Request $request): Response
     {
-        $scores = [];
-        $result = $categoriesRepository->findCompletesAndActivesWithScores($this->getUser());
-        $categories = $result['data'];
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 8);
+
+        $categories = $categoriesRepository->findCompletesAndActivesWithScores($page, $limit, $this->getUser());
         // dd($result);
-        foreach ($categories as $category) {
+        foreach ($categories['data'] as $category) {
             foreach ($category->getQuestionnaires() as $questionnaire) {
                 $scores[] = $questionnaire->getScores()[0];
             }
