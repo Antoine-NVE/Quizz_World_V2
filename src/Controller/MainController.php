@@ -15,9 +15,17 @@ class MainController extends AbstractController
     {
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 8);
+        $sort = $request->query->getString('sort', 'createdAt');
+        $order = $request->query->getString('order', 'desc');
 
-        $categories = $categoriesRepository->findCompletesAndActivesWithScores($page, $limit, $this->getUser());
+        $categories = $categoriesRepository->findCompletesAndActivesWithScores($page, $limit, $sort, $order, $this->getUser());
 
+        // Evite certaines erreurs dans le cas où l'on n'a pas de résultat
+        if ($categories['pages'] === 0) {
+            $categories['pages'] = 1;
+        }
+
+        $scores = [];
         foreach ($categories['data'] as $category) {
             foreach ($category->getQuestionnaires() as $questionnaire) {
                 $scores[] = $questionnaire->getScores()[0];

@@ -1,38 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  {% for category in categories.data %}
-    <div class="col-12 col-md-6 col-lg-4 col-xxl-3 p-1">
-      <div class="card">
-        <img src="{{ asset('img/' ~ category.image) }}" class="card-img-top" alt="{{ category.title }}" style="aspect-ratio: 16/9; object-fit: cover;">
-        <div class="card-body">
-          <h5 class="card-title mb-4">{{ category.title }}</h5>
-          <div class="d-flex flex-column align-items-center flex-md-row">
-            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn {{ scores[loop.index * 3 - 3] is defined and scores[loop.index * 3 - 3] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Facile</a>
-            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn {{ scores[loop.index * 3 - 2] is defined and scores[loop.index * 3 - 2] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Moyen</a>
-            <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn {{ scores[loop.index * 3 - 1] is defined and scores[loop.index * 3 - 1] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Difficile</a>
+  {% if categories.data is empty %}
+    <h1>Aucun résultat</h1>
+  {% else %}
+    {% for category in categories.data %}
+      <div class="col-12 col-md-6 col-lg-4 col-xxl-3 p-1">
+        <div class="card">
+          <img src="{{ asset('img/' ~ category.image) }}" class="card-img-top" alt="{{ category.title }}" style="aspect-ratio: 16/9; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title mb-4">{{ category.title }}</h5>
+            <div class="d-flex flex-column align-items-center flex-md-row">
+              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn {{ scores[loop.index * 3 - 3] is defined and scores[loop.index * 3 - 3] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Facile</a>
+              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn {{ scores[loop.index * 3 - 2] is defined and scores[loop.index * 3 - 2] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Moyen</a>
+              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn {{ scores[loop.index * 3 - 1] is defined and scores[loop.index * 3 - 1] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Difficile</a>
+            </div>
+            <small class="d-block text-end">Créé par :
+              {{ category.user.pseudo }}</small>
           </div>
-          <small class="d-block text-end">Créé par :
-            {{ category.user.pseudo }}</small>
         </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  {% endif %}
 
   <nav class="d-flex" aria-label="Navigation catégories accueil">
     <ul class="pagination">
       <li class="page-item">
-        <a class="page-link {{ categories.page == 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1, limit: categories.limit}) }}" aria-label="Previous">
+        <a class="page-link {{ categories.page == 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1, limit: categories.limit, sort: categories.sort, order: categories.order}) }}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
       {% for i in 1..categories.pages %}
         <li class="page-item">
-          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i, limit: categories.limit}) }}">{{ i }}</a>
+          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i, limit: categories.limit, sort: categories.sort, order: categories.order}) }}">{{ i }}</a>
         </li>
       {% endfor %}
       <li class="page-item">
-        <a class="page-link {{ categories.page == categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1, limit: categories.limit}) }}" aria-label="Next">
+        <a class="page-link {{ categories.page == categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1, limit: categories.limit, sort: categories.sort, order: categories.order}) }}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
@@ -40,20 +44,40 @@
 
     <div class="dropdown ms-auto">
       <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ categories.limit }}
+        Trier par
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item {{ (categories.sort == 'createdAt' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'createdAt', order: 'desc'}) }}">Le plus récent d'abord</a>
+        </li>
+        <li>
+          <a class="dropdown-item {{ (categories.sort == 'createdAt' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'createdAt', order: 'asc'}) }}">Le plus ancien d'abord</a>
+        </li>
+        <li>
+          <a class="dropdown-item {{ (categories.sort == 'title' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'title', order: 'asc'}) }}">Ordre alphabétique</a>
+        </li>
+        <li>
+          <a class="dropdown-item {{ (categories.sort == 'title' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'title', order: 'desc'}) }}">Ordre alphabétique inverse</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="dropdown ms-1">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Affichage
       </button>
       <ul class="dropdown-menu" style="min-width: 0;">
         <li>
-          <a class="dropdown-item text-center" href="{{ path('app_main', {limit: 4}) }}">4</a>
+          <a class="dropdown-item {{ categories.limit == 4 ? 'active' : '' }} text-center" href="{{ path('app_main', {limit: 4, sort: categories.sort, order: categories.order}) }}">4</a>
         </li>
         <li>
-          <a class="dropdown-item text-center" href="{{ path('app_main', {limit: 8}) }}">8</a>
+          <a class="dropdown-item {{ categories.limit == 8 ? 'active' : '' }} text-center" href="{{ path('app_main', {limit: 8, sort: categories.sort, order: categories.order}) }}">8</a>
         </li>
         <li>
-          <a class="dropdown-item" href="{{ path('app_main', {limit: 12}) }}">12</a>
+          <a class="dropdown-item {{ categories.limit == 12 ? 'active' : '' }}" href="{{ path('app_main', {limit: 12, sort: categories.sort, order: categories.order}) }}">12</a>
         </li>
         <li>
-          <a class="dropdown-item" href="{{ path('app_main', {limit: 16}) }}">16</a>
+          <a class="dropdown-item {{ categories.limit == 16 ? 'active' : '' }}" href="{{ path('app_main', {limit: 16, sort: categories.sort, order: categories.order}) }}">16</a>
         </li>
       </ul>
     </div>
