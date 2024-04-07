@@ -17,7 +17,7 @@ class MainController extends AbstractController
         $limit = $request->query->getInt('limit', 8);
 
         $categories = $categoriesRepository->findCompletesAndActivesWithScores($page, $limit, $this->getUser());
-        // dd($result);
+
         foreach ($categories['data'] as $category) {
             foreach ($category->getQuestionnaires() as $questionnaire) {
                 $scores[] = $questionnaire->getScores()[0];

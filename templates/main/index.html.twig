@@ -19,23 +19,44 @@
     </div>
   {% endfor %}
 
-  <nav aria-label="Navigation catégories accueil">
+  <nav class="d-flex" aria-label="Navigation catégories accueil">
     <ul class="pagination">
       <li class="page-item">
-        <a class="page-link {{ categories.page == 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1}) }}" aria-label="Previous">
+        <a class="page-link {{ categories.page == 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1, limit: categories.limit}) }}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
       {% for i in 1..categories.pages %}
         <li class="page-item">
-          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i}) }}">{{ i }}</a>
+          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i, limit: categories.limit}) }}">{{ i }}</a>
         </li>
       {% endfor %}
       <li class="page-item">
-        <a class="page-link {{ categories.page == categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1}) }}" aria-label="Next">
+        <a class="page-link {{ categories.page == categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1, limit: categories.limit}) }}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
     </ul>
+
+    <div class="dropdown ms-auto">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ categories.limit }}
+      </button>
+      <ul class="dropdown-menu" style="min-width: 0;">
+        <li>
+          <a class="dropdown-item text-center" href="{{ path('app_main', {limit: 4}) }}">4</a>
+        </li>
+        <li>
+          <a class="dropdown-item text-center" href="{{ path('app_main', {limit: 8}) }}">8</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ path('app_main', {limit: 12}) }}">12</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ path('app_main', {limit: 16}) }}">16</a>
+        </li>
+      </ul>
+    </div>
   </nav>
+
 {% endblock %}

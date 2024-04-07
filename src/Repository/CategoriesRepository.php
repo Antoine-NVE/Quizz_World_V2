@@ -23,12 +23,10 @@ class CategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, Categories::class);
     }
 
-    public function findCompletesAndActivesWithScores($page, $limit, ?Users $user = null): array
+    public function findCompletesAndActivesWithScores(int $page, int $limit, ?Users $user = null): array
     {
         // On multiplie par 3 car il y a 3 questionnaires par catégorie
-        $limit = abs($limit * 3);
-
-        $result = [];
+        $limit = $limit * 3;
 
         $query = $this->createQueryBuilder('c')
             ->select('c', 'qn', 's', 'u')
@@ -45,17 +43,15 @@ class CategoriesRepository extends ServiceEntityRepository
         $paginator = new Paginator($query);
         $data = $paginator->getQuery()->getResult();
 
-        if (empty($data)) {
-            return $result;
-        }
-
         // A l'inverse on divise par 3 car le count() ne compte que les catégories
-        $pages = (int)ceil($paginator->count() / ($limit / 3));
+        $limit = $limit / 3;
+
+        $pages = (int)ceil($paginator->count() / $limit);
 
         $result['data'] = $data;
         $result['pages'] = $pages;
         $result['page'] = $page;
-        $result['$limit'] = $limit;
+        $result['limit'] = $limit;
 
         return $result;
     }
