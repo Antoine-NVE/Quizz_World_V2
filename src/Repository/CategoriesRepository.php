@@ -23,7 +23,7 @@ class CategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, Categories::class);
     }
 
-    public function findCompletesAndActivesWithScores(int $page, int $limit, string $sort, string $order, ?Users $user = null): array
+    public function findCompletesAndActivesWithScores(int $page, int $limit, string $sort, string $order, string $search, ?Users $user = null): array
     {
         // On multiplie par 3 car il y a 3 questionnaires par catégorie
         $limit = $limit * 3;
@@ -37,7 +37,9 @@ class CategoriesRepository extends ServiceEntityRepository
             ->andWhere('(SELECT COUNT(q.id) FROM App\Entity\Questions q JOIN q.questionnaire qn2 WHERE qn2.category = c) = 30')
             ->andWhere('c.isActive = true')
             ->orderBy('c.' . $sort, $order)
+            ->andWhere('c.title LIKE :search OR u.pseudo LIKE :search')
             ->setParameter('user', $user)
+            ->setParameter('search', '%' . $search . '%')
             ->setFirstResult(($page * $limit) - ($limit))
             ->setMaxResults($limit);
 
@@ -55,6 +57,7 @@ class CategoriesRepository extends ServiceEntityRepository
         $result['limit'] = $limit;
         $result['sort'] = $sort;
         $result['order'] = $order;
+        $result['search'] = $search;
 
         return $result;
     }
