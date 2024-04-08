@@ -36,7 +36,7 @@
   <nav class="d-flex" aria-label="Navigation catégories accueil">
     <ul class="pagination">
       <li class="page-item">
-        <a class="page-link {{ categories.page == 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}" aria-label="Previous">
+        <a class="page-link {{ categories.page <= 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
@@ -46,7 +46,7 @@
         </li>
       {% endfor %}
       <li class="page-item">
-        <a class="page-link {{ categories.page == categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}" aria-label="Next">
+        <a class="page-link {{ categories.page >= categories.pages ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page + 1, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
