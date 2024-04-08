@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {% include "admin/partials/navbar.html.twig" %}
+  <div class="col-10">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Titre</th>
+          <th scope="col">Créée le</th>
+          <th scope="col">Créateur</th>
+          <th scope="col">Questions</th>
+          <th scope="col">Active</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+          <tr>
+            <th scope="row">{{ category[0].id }}</th>
+            <td>{{ category[0].title }}</td>
+            <td>{{ category[0].createdAt|date("d/m/Y à H:m:s") }}</td>
+            <td>
+              <a href="#">{{ category[0].user.pseudo }}</a>
+            </td>
+            <td>
+              {% if category[1] == 30 %}
+                <span class="badge text-bg-success">{{ category[1] }}</span>
+              {% else %}
+                <span class="badge text-bg-danger">{{ category[1] }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if category[0].isActive %}
+                <span class="badge text-bg-success">Oui</span>
+              {% else %}
+                <span class="badge text-bg-danger">Non</span>
+              {% endif %}
+            </td>
+            <td>
+              <a class="btn btn-sm btn-warning" href="#">Modifier</a>
+              <a class="btn btn-sm btn-danger" href="#">Supprimer</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock body %}

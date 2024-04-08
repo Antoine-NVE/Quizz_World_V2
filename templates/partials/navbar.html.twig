@@ -15,6 +15,13 @@
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         {% if app.user %}
+          {% if app
+            .user
+            .roles[0] == 'ROLE_ADMIN' %}
+            <li class="nav-item">
+              <a class="nav-link {{ app.current_route starts with 'admin_' ? 'active' : '' }}" href="{{ path('admin_main_index') }}">Administration</a>
+            </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link {{ app.current_route == 'app_profile' ? 'active' : '' }}" href="#">Profil</a>
           </li>

@@ -81,6 +81,18 @@ class CategoriesRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findAllWithUserAndNumberOfQuestions(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'u', 'COUNT(q.id)')
+            ->join('c.user', 'u')
+            ->join('c.questionnaires', 'qn')
+            ->leftJoin('qn.questions', 'q')
+            ->groupBy('c.id')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Categories[] Returns an array of Categories objects
     //     */
