@@ -16,7 +16,7 @@ class MainController extends AbstractController
         // Eléments de l'URL pour la pagination et le tri
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 8);
-        $sort = $request->query->getString('sort', 'createdAt');
+        $sort = $request->query->getString('sort', 'c.createdAt');
         $order = $request->query->getString('order', 'desc');
         $search = $request->query->getString('search');
 

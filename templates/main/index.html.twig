@@ -2,6 +2,9 @@
 
 {% block body %}
   <form class="d-flex" role="search" method="get">
+    <input type="hidden" name="limit" value="{{ categories.limit }}">
+    <input type="hidden" name="sort" value="{{ categories.sort }}">
+    <input type="hidden" name="order" value="{{ categories.order }}">
     <input class="form-control me-2" type="search" placeholder="Rechercher un titre ou un créateur" aria-label="Search" name="search" value="{{ categories.search }}">
     <button class="btn btn-outline-success" type="submit">Rechercher</button>
   </form>
@@ -55,16 +58,22 @@
       </button>
       <ul class="dropdown-menu">
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'createdAt' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'createdAt', order: 'desc', search: categories.search}) }}">Le plus récent d'abord</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.createdAt' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.createdAt', order: 'desc', search: categories.search}) }}">Le plus récent d'abord</a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'createdAt' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'createdAt', order: 'asc', search: categories.search}) }}">Le plus ancien d'abord</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.createdAt' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.createdAt', order: 'asc', search: categories.search}) }}">Le plus ancien d'abord</a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'title' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'title', order: 'asc', search: categories.search}) }}">Ordre alphabétique</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.title' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.title', order: 'asc', search: categories.search}) }}">Ordre alphabétique</a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'title' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'title', order: 'desc', search: categories.search}) }}">Ordre alphabétique inverse</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.title' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.title', order: 'desc', search: categories.search}) }}">Ordre alphabétique inverse</a>
+        </li>
+        <li>
+          <a class="dropdown-item {{ (categories.sort == 'u.pseudo' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'u.pseudo', order: 'asc', search: categories.search}) }}">Créateur</a>
+        </li>
+        <li>
+          <a class="dropdown-item {{ (categories.sort == 'u.pseudo' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'u.pseudo', order: 'desc', search: categories.search}) }}">Créateur inverse</a>
         </li>
       </ul>
     </div>

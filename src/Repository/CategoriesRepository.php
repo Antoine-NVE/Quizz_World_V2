@@ -36,7 +36,7 @@ class CategoriesRepository extends ServiceEntityRepository
             // Sous-requête qui vérifie qu'il y a 30 questions dans la catégorie
             ->andWhere('(SELECT COUNT(q.id) FROM App\Entity\Questions q JOIN q.questionnaire qn2 WHERE qn2.category = c) = 30')
             ->andWhere('c.isActive = true')
-            ->orderBy('c.' . $sort, $order)
+            ->orderBy($sort, $order)
             ->andWhere('c.title LIKE :search OR u.pseudo LIKE :search')
             ->setParameter('user', $user)
             ->setParameter('search', '%' . $search . '%')
