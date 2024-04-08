@@ -66,18 +66,10 @@ class MainController extends AbstractController
             $categories['pages'] = 1;
         }
 
-        // Défini quels questionnaires ont déjà un score d'établi
-        $scores = [];
-        foreach ($categories['data'] as $category) {
-            foreach ($category->getQuestionnaires() as $questionnaire) {
-                $scores[] = $questionnaire->getScores()[0];
-            }
-        }
-
         // On supprime les potentiels scores stockés en session
         $session = $request->getSession();
         $session->remove('answers');
 
-        return $this->render('main/index.html.twig', compact('categories', 'scores'));
+        return $this->render('main/index.html.twig', compact('categories'));
     }
 }

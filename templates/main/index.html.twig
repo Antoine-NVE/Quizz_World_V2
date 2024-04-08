@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+  {# Barre de recherche #}
   <form class="d-flex" role="search" method="get">
     <input type="hidden" name="limit" value="{{ categories.limit }}">
     <input type="hidden" name="sort" value="{{ categories.sort }}">
@@ -9,6 +10,7 @@
     <button class="btn btn-outline-success" type="submit">Rechercher</button>
   </form>
 
+  {# Affichage des catégories (ou non) #}
   {% if categories.data is empty %}
     <h2>Aucun résultat,
       <a href="{{ path('app_main') }}">retour à l'accueil</a>
@@ -21,9 +23,11 @@
           <div class="card-body">
             <h5 class="card-title mb-4">{{ category.title }}</h5>
             <div class="d-flex flex-column align-items-center flex-md-row">
-              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'facile'}) }}" class="btn {{ scores[loop.index * 3 - 3] is defined and scores[loop.index * 3 - 3] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Facile</a>
-              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'moyen'}) }}" class="btn {{ scores[loop.index * 3 - 2] is defined and scores[loop.index * 3 - 2] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Moyen</a>
-              <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: 'difficile'}) }}" class="btn {{ scores[loop.index * 3 - 1] is defined and scores[loop.index * 3 - 1] is not null ? 'btn-success' : 'btn-primary' }} w-100 m-1">Difficile</a>
+              {% for questionnaire in category.questionnaires %}
+                <a href="{{ path('app_quizz_index', {slug: category.slug, difficulty: questionnaire.difficulty}) }}" class="btn {{ questionnaire.scores[0] is defined ? 'btn-success' : 'btn-primary' }} w-100 m-1">
+                  {{ questionnaire.difficulty|capitalize }}
+                </a>
+              {% endfor %}
             </div>
             <small class="d-block text-end">Créé par :
               {{ category.user.pseudo }}</small>
@@ -34,6 +38,7 @@
   {% endif %}
 
   <nav class="d-flex" aria-label="Navigation catégories accueil">
+    {# Pagination #}
     <ul class="pagination">
       <li class="page-item">
         <a class="page-link {{ categories.page <= 1 ? 'disabled' : '' }}" href="{{ path('app_main', {page: categories.page - 1, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}" aria-label="Previous">
@@ -52,6 +57,7 @@
       </li>
     </ul>
 
+    {# Trier par #}
     <div class="dropdown ms-auto">
       <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         Trier par
@@ -78,6 +84,7 @@
       </ul>
     </div>
 
+    {# Nombre de catégories à afficher #}
     <div class="dropdown ms-1">
       <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         Affichage
