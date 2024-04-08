@@ -47,7 +47,9 @@
       </li>
       {% for i in 1..categories.pages %}
         <li class="page-item">
-          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}">{{ i }}</a>
+          <a class="page-link {{ categories.page == i ? 'active' : '' }}" href="{{ path('app_main', {page: i, limit: categories.limit, sort: categories.sort, order: categories.order, search: categories.search}) }}">
+            {{ i }}
+          </a>
         </li>
       {% endfor %}
       <li class="page-item">
@@ -64,22 +66,34 @@
       </button>
       <ul class="dropdown-menu">
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'c.createdAt' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.createdAt', order: 'desc', search: categories.search}) }}">Le plus récent d'abord</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.createdAt' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.createdAt', order: 'desc', search: categories.search}) }}">
+            Le plus récent d'abord
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'c.createdAt' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.createdAt', order: 'asc', search: categories.search}) }}">Le plus ancien d'abord</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.createdAt' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.createdAt', order: 'asc', search: categories.search}) }}">
+            Le plus ancien d'abord
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'c.title' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.title', order: 'asc', search: categories.search}) }}">Ordre alphabétique</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.title' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.title', order: 'asc', search: categories.search}) }}">
+            Ordre alphabétique
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'c.title' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.title', order: 'desc', search: categories.search}) }}">Ordre alphabétique inverse</a>
+          <a class="dropdown-item {{ (categories.sort == 'c.title' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'c.title', order: 'desc', search: categories.search}) }}">
+            Ordre alphabétique inverse
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'u.pseudo' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'u.pseudo', order: 'asc', search: categories.search}) }}">Créateur</a>
+          <a class="dropdown-item {{ (categories.sort == 'u.pseudo' and categories.order == 'asc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'u.pseudo', order: 'asc', search: categories.search}) }}">
+            Créateur
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ (categories.sort == 'u.pseudo' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'u.pseudo', order: 'desc', search: categories.search}) }}">Créateur inverse</a>
+          <a class="dropdown-item {{ (categories.sort == 'u.pseudo' and categories.order == 'desc' ) ? 'active' : '' }}" href="{{ path('app_main', {limit: categories.limit, sort: 'u.pseudo', order: 'desc', search: categories.search}) }}">
+            Créateur inverse
+          </a>
         </li>
       </ul>
     </div>
@@ -91,16 +105,24 @@
       </button>
       <ul class="dropdown-menu" style="min-width: 0;">
         <li>
-          <a class="dropdown-item {{ categories.limit == 4 ? 'active' : '' }} text-center" href="{{ path('app_main', {limit: 4, sort: categories.sort, order: categories.order, search: categories.search}) }}">4</a>
+          <a class="dropdown-item {{ categories.limit == 4 ? 'active' : '' }} text-center" href="{{ path('app_main', {limit: 4, sort: categories.sort, order: categories.order, search: categories.search}) }}">
+            4
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ categories.limit == 8 ? 'active' : '' }} text-center" href="{{ path('app_main', {limit: 8, sort: categories.sort, order: categories.order, search: categories.search}) }}">8</a>
+          <a class="dropdown-item {{ categories.limit == 8 ? 'active' : '' }} text-center" href="{{ path('app_main', {limit: 8, sort: categories.sort, order: categories.order, search: categories.search}) }}">
+            8
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ categories.limit == 12 ? 'active' : '' }}" href="{{ path('app_main', {limit: 12, sort: categories.sort, order: categories.order, search: categories.search}) }}">12</a>
+          <a class="dropdown-item {{ categories.limit == 12 ? 'active' : '' }}" href="{{ path('app_main', {limit: 12, sort: categories.sort, order: categories.order, search: categories.search}) }}">
+            12
+          </a>
         </li>
         <li>
-          <a class="dropdown-item {{ categories.limit == 16 ? 'active' : '' }}" href="{{ path('app_main', {limit: 16, sort: categories.sort, order: categories.order, search: categories.search}) }}">16</a>
+          <a class="dropdown-item {{ categories.limit == 16 ? 'active' : '' }}" href="{{ path('app_main', {limit: 16, sort: categories.sort, order: categories.order, search: categories.search}) }}">
+            16
+          </a>
         </li>
       </ul>
     </div>
