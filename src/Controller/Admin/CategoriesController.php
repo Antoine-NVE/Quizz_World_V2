@@ -37,18 +37,17 @@ class CategoriesController extends AbstractController
             $category->setSlug($slugger->slug($category->getTitle())->lower());
             $category->setUser($user);
 
-            // On récupère l'image et l'extension
+            // On récupère l'image
             $image = $form->get('image')->getData();
-            $extension = $image->guessExtension();
 
-            // On définie son nom à partir du slug de la catégorie
-            $imageName = $category->getSlug() . '.' . $extension;
-
-            // On la crée dans le dossier public/img/
-            $image->move($this->getParameter('images_directory'), $imageName);
+            // On définit son nom
+            $imageName = uniqid() . '.webp';
 
             // On indique à l'objet le nom de l'image
             $category->setImage($imageName);
+
+            // On la crée dans le dossier public/img/
+            $image->move($this->getParameter('images_directory'), $category->getImage());
 
             $difficulties = ['facile', 'moyen', 'difficile'];
             foreach ($difficulties as $difficulty) {
@@ -62,9 +61,41 @@ class CategoriesController extends AbstractController
             $manager->persist($category);
             $manager->flush();
 
-            // return $this->redirectToRoute('admin_categories_index');
+            return $this->redirectToRoute('admin_categories_index');
         }
 
         return $this->render('admin/categories/add.html.twig', compact('form'));
+    }
+
+    #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Categories $category, SluggerInterface $slugger, EntityManagerInterface $manager, Request $request): Response
+    {
+        // On crée le formulaire en spécifiant que l'input image n'est pas obligatoire
+        $form = $this->createForm(CategoriesFormType::class, $category, ['image_required' => false]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $category->setSlug($slugger->slug($category->getTitle())->lower());
+
+            // On récupère l'image du formulaire
+            $image = $form->get('image')->getData();
+
+            // Si elle n'est pas null, on modifie celle qui est stockée
+            if ($image) {
+                // On récupère le nom de la base
+                $imageName = $category->getImage();
+
+                // On la modifie dans le dossier public/img/
+                $image->move($this->getParameter('images_directory'), $imageName);
+            }
+
+            $manager->persist($category);
+            $manager->flush();
+
+            return $this->redirectToRoute('admin_categories_index');
+        }
+
+        return $this->render('admin/categories/edit.html.twig', compact('form'));
     }
 }

@@ -18,6 +18,8 @@ class CategoriesFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $imageRequired = $options['image_required'];
+
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
@@ -34,8 +36,9 @@ class CategoriesFormType extends AbstractType
             ])
             ->add('image', FileType::class, [
                 'required' => false,
+                'mapped' => false,
                 'constraints' => [
-                    new NotBlank(),
+                    $imageRequired ? new NotBlank() : new Image(), // Le new Image() est inutile mais null ou [] renvoie une erreur
                     new Image()
                 ]
             ])
@@ -45,7 +48,7 @@ class CategoriesFormType extends AbstractType
                 'help' => 'Permet d\'afficher la catégorie, si celle-ci est complète.'
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Créer'
+                'label' => 'Valider'
             ]);
     }
 
@@ -53,6 +56,7 @@ class CategoriesFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Categories::class,
+            'image_required' => true
         ]);
     }
 }

@@ -56,7 +56,8 @@ class Categories
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    // Le ? permet de corriger l'erreur qui est envoyée lorsque le titre de la catégorie, lors de la modification, est laissé vide
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
