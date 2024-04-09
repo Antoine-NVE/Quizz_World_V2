@@ -93,6 +93,16 @@ class CategoriesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function countCompletedAndActives(): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('(SELECT COUNT(q2.id) FROM App\Entity\Questions q2 JOIN q2.questionnaire qn2 WHERE qn2.category = c) = 30')
+            ->andWhere('c.isActive = true')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     //    /**
     //     * @return Categories[] Returns an array of Categories objects
     //     */

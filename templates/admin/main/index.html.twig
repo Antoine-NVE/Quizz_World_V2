@@ -1,5 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  {% include "admin/partials/navbar.html.twig" %}
+  <div class="list-group col-3">
+    {% include "admin/partials/navbar.html.twig" %}
+  </div>
+  <div class="col-3 p-1">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center">{{ categories }}</h2>
+        <h5 class="card-title text-center">Catégories affichées</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col-3 p-1">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center">{{ users }}</h2>
+        <h5 class="card-title text-center">Utilisateurs vérifiés</h5>
+      </div>
+    </div>
+  </div>
 {% endblock body %}

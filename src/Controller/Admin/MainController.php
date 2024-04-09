@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Repository\CategoriesRepository;
+use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -10,8 +12,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(): Response
+    public function index(CategoriesRepository $categoriesRepository, UsersRepository $usersRepository): Response
     {
-        return $this->render('admin/main/index.html.twig');
+        $categories = $categoriesRepository->countCompletedAndActives();
+        $users = $usersRepository->countVerified();
+
+        return $this->render('admin/main/index.html.twig', compact('categories', 'users'));
     }
 }
