@@ -7,6 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Faker;
 
 class CategoriesFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -34,12 +35,15 @@ class CategoriesFixtures extends Fixture implements DependentFixtureInterface
     // Fonction qui crée une catégorie
     public function create(string $name, string $extension, ObjectManager $manager): void
     {
+        $faker = Faker\Factory::create('fr_FR');
+
         $category = new Categories();
         $category->setTitle($name);
         $category->setSlug($this->slugger->slug($category->getTitle())->lower());
         $category->setImage($category->getSlug() . $extension);
-        $category->setUser($this->getReference('admin'));
+        $category->setUser($this->getReference('user-' . $faker->numberBetween(1, 5)));
         $category->setIsActive(true);
+        $category->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTime()));
 
         $this->addReference('category-' . self::$categoryCounter, $category);
         self::$categoryCounter++;
