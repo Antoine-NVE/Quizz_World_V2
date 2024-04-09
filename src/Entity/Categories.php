@@ -30,7 +30,7 @@ class Categories
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(targetEntity: Questionnaires::class, mappedBy: 'category', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Questionnaires::class, mappedBy: 'category', orphanRemoval: true, cascade: ['remove'])]
     private Collection $questionnaires;
 
     #[ORM\Column]

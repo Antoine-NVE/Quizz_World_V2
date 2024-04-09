@@ -46,10 +46,10 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(targetEntity: Scores::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Scores::class, mappedBy: 'user', orphanRemoval: true, cascade: ['remove'])]
     private Collection $scores;
 
-    #[ORM\OneToMany(targetEntity: Categories::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Categories::class, mappedBy: 'user', orphanRemoval: true, cascade: ['remove'])]
     private Collection $categories;
 
     public function __construct()

@@ -28,7 +28,7 @@ class Questions
     #[ORM\JoinColumn(nullable: false)]
     private ?Questionnaires $questionnaire = null;
 
-    #[ORM\OneToMany(targetEntity: Propositions::class, mappedBy: 'question', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Propositions::class, mappedBy: 'question', orphanRemoval: true, cascade: ['remove'])]
     private Collection $propositions;
 
     public function __construct()

@@ -22,10 +22,10 @@ class Questionnaires
     #[ORM\JoinColumn(nullable: false)]
     private ?Categories $category = null;
 
-    #[ORM\OneToMany(targetEntity: Scores::class, mappedBy: 'questionnaire', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Scores::class, mappedBy: 'questionnaire', orphanRemoval: true, cascade: ['remove'])]
     private Collection $scores;
 
-    #[ORM\OneToMany(targetEntity: Questions::class, mappedBy: 'questionnaire', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Questions::class, mappedBy: 'questionnaire', orphanRemoval: true, cascade: ['remove'])]
     private Collection $questions;
 
     public function __construct()
