@@ -5,6 +5,7 @@
     {% include "admin/partials/navbar.html.twig" %}
   </div>
   <div class="col-10">
-    {{ form(form) }}
-    </div>
-  {% endblock body %}
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+  </div>
+{% endblock body %}
