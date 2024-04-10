@@ -61,6 +61,7 @@ class CategoriesController extends AbstractController
             $manager->persist($category);
             $manager->flush();
 
+            $this->addFlash('success', 'La catégorie a bien été créée');
             return $this->redirectToRoute('admin_categories_index');
         }
 
@@ -93,6 +94,7 @@ class CategoriesController extends AbstractController
             $manager->persist($category);
             $manager->flush();
 
+            $this->addFlash('success', 'La catégorie a bien été modifiée');
             return $this->redirectToRoute('admin_categories_index');
         }
 
@@ -113,6 +115,7 @@ class CategoriesController extends AbstractController
         $manager->remove($category);
         $manager->flush();
 
+        $this->addFlash('success', 'La catégorie a bien été supprimée');
         return $this->redirectToRoute('admin_categories_index');
     }
 }
