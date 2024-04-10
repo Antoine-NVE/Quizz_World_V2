@@ -42,7 +42,30 @@
             </td>
             <td>
               <a class="btn btn-sm btn-warning" href="{{ path('admin_categories_edit', {id: category[0].id}) }}">Modifier</a>
-              <a class="btn btn-sm btn-danger" href="#">Supprimer</a>
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ category[0].id }}Modal">Supprimer</button>
+
+              {# Fenêtre modale #}
+              <div class="modal fade" id="{{ category[0].id }}Modal" tabindex="-1" aria-labelledby="{{ category[0].id }}ModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="{{ category[0].id }}ModalLabel">Supprimer la catégorie
+                        {{ category[0].title }}
+                        ?</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Cela va également supprimer tous les éléments associés (questionnaires, questions, propositions et scores).
+                      <strong>Cette action est irréversible.</strong>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                      <a class="btn btn-danger" href="#">Supprimer</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </td>
           </tr>
         {% endfor %}
