@@ -98,4 +98,21 @@ class CategoriesController extends AbstractController
 
         return $this->render('admin/categories/edit.html.twig', compact('form'));
     }
+
+    #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
+    public function remove(Categories $category, EntityManagerInterface $manager): Response
+    {
+        // On récupère le nom de l'image, et on concatène avec le répertoire complet
+        $image = $category->getImage();
+        $imageName = $this->getParameter('images_directory') . '/' . $image;
+
+        // On supprime l'image physique
+        unlink($imageName);
+
+        // On supprime la catégorie
+        $manager->remove($category);
+        $manager->flush();
+
+        return $this->redirectToRoute('admin_categories_index');
+    }
 }

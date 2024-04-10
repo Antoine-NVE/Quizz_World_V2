@@ -55,12 +55,18 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      Cela va également supprimer tous les éléments associés (questionnaires, questions, propositions et scores).
+                      Cela va également supprimer tous les éléments associés (questionnaires, questions, propositions et scores, ainsi que l'image).
                       <strong>Cette action est irréversible.</strong>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                      <a class="btn btn-danger" href="#">Supprimer</a>
+
+                      {# Formulaire qui simule une method DELETE, pour supprimer une catégorie #}
+                      <form action="{{ path('admin_categories_remove', {id: category[0].id}) }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                      </form>
+
                     </div>
                   </div>
                 </div>
