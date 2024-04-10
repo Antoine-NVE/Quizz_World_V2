@@ -6,6 +6,7 @@ use App\Entity\Categories;
 use App\Entity\Questionnaires;
 use App\Form\CategoriesFormType;
 use App\Repository\CategoriesRepository;
+use App\Repository\QuestionnairesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,8 +70,18 @@ class CategoriesController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Categories $category, SluggerInterface $slugger, EntityManagerInterface $manager, Request $request): Response
-    {
+    public function edit(
+        int $id,
+        CategoriesRepository $categoriesRepository,
+        QuestionnairesRepository $questionnairesRepository,
+        SluggerInterface $slugger,
+        EntityManagerInterface $manager,
+        Request $request
+    ): Response {
+        // Je n'ai pas réussi à n'utiliser qu'une seule requête, bien que j'y arrive sans soucis avec phpMyAdmin
+        $category = $categoriesRepository->find($id);
+        $questionnaires = $questionnairesRepository->findByCategoryAndCountQuestions($category);
+
         // On crée le formulaire en spécifiant que l'input image n'est pas obligatoire
         $form = $this->createForm(CategoriesFormType::class, $category, ['image_required' => false]);
 
@@ -98,7 +109,7 @@ class CategoriesController extends AbstractController
             return $this->redirectToRoute('admin_categories_index');
         }
 
-        return $this->render('admin/categories/edit.html.twig', compact('form'));
+        return $this->render('admin/categories/edit.html.twig', compact('form', 'category', 'questionnaires'));
     }
 
     #[Route('/{id}', name: 'remove', methods: ['DELETE'])]

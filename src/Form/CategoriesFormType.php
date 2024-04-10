@@ -48,7 +48,10 @@ class CategoriesFormType extends AbstractType
                 'help' => 'Permet d\'afficher la catégorie, si celle-ci est complète.'
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Valider'
+                'label' => 'Valider',
+                'attr' => [
+                    'class' => 'btn btn-primary d-block ms-auto'
+                ]
             ]);
     }
 
