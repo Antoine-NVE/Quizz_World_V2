@@ -33,7 +33,7 @@
               {% endif %}
             </td>
             <td>
-              <a class="btn btn-sm btn-primary" href="#">Détails</a>
+              <a class="btn btn-sm btn-primary" href="{{ path('admin_questionnaires_index', {id: questionnaire[0].id}) }}">Détails</a>
             </td>
           </tr>
         {% endfor %}
