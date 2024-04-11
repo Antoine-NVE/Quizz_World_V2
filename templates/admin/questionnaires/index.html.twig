@@ -5,6 +5,7 @@
     {% include "admin/partials/navbar.html.twig" %}
   </div>
   <div class="col-10">
+    <a class="btn btn-primary mb-3" href="{{ path('admin_categories_edit', {id: questionnaire.category.id}) }}">Retour</a>
     <table class="table">
       <thead>
         <tr>
