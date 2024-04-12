@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <div class="list-group col-2">
+    {% include "admin/partials/navbar.html.twig" %}
+  </div>
+  <div class="col-10">
+    {{ form(form) }}
+    </div>
+  {% endblock %}
