@@ -46,7 +46,8 @@ class Questions
         return $this->question;
     }
 
-    public function setQuestion(string $question): static
+    // Le ? permet de corriger l'erreur qui est envoyée lorsque la question, lors de la modification, est laissée vide
+    public function setQuestion(?string $question): static
     {
         $this->question = $question;
 
