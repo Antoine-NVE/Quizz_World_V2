@@ -5,6 +5,7 @@
     {% include "admin/partials/navbar.html.twig" %}
   </div>
   <div class="col-10">
+    <a class="btn btn-primary mb-3" href="{{ path('admin_questionnaires_index', {id: question.questionnaire.id}) }}">Retour</a>
     {{ form_start(form) }}
     {{ form_end(form) }}
   </div>

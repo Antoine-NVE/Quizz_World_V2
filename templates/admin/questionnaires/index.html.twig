@@ -22,7 +22,7 @@
             <td>{{ question.question }}</td>
             <td>{{ question.answer }}</td>
             <td>
-              <a class="btn btn-sm btn-warning" href="#">Modifier</a>
+              <a class="btn btn-sm btn-warning" href="{{ path('admin_questions_edit', {id: question.id}) }}">Modifier</a>
               <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ questionnaire.id }}Modal">Supprimer</button>
 
               {# Fenêtre modale #}
