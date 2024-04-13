@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/questions', name: 'admin_questions_')]
 class QuestionsController extends AbstractController
 {
-    #[Route('/{id}', name: 'edit')]
+    #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function index(int $id, QuestionsRepository $questionsRepository, PropositionsRepository $propositionsRepository, EntityManagerInterface $manager, Request $request): Response
     {
         $question = $questionsRepository->find($id);
@@ -61,5 +61,18 @@ class QuestionsController extends AbstractController
         }
 
         return $this->render('admin/questions/edit.html.twig', compact('form', 'question'));
+    }
+
+    #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
+    public function remove(int $id, QuestionsRepository $questionsRepository, EntityManagerInterface $manager): Response
+    {
+        $question = $questionsRepository->find($id);
+        $id = $question->getQuestionnaire()->getId();
+
+        $manager->remove($question);
+        $manager->flush();
+
+        $this->addFlash('success', 'La question a bien été supprimée.');
+        return $this->redirectToRoute('admin_questionnaires_index', compact('id'));
     }
 }

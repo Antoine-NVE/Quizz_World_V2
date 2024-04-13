@@ -23,10 +23,10 @@
             <td>{{ question.answer }}</td>
             <td>
               <a class="btn btn-sm btn-warning" href="{{ path('admin_questions_edit', {id: question.id}) }}">Modifier</a>
-              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ questionnaire.id }}Modal">Supprimer</button>
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ question.id }}Modal">Supprimer</button>
 
               {# Fenêtre modale #}
-              <div class="modal fade" id="{{ questionnaire.id }}Modal" tabindex="-1" aria-labelledby="{{ questionnaire.id }}ModalLabel" aria-hidden="true">
+              <div class="modal fade" id="{{ question.id }}Modal" tabindex="-1" aria-labelledby="{{ question.id }}ModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -40,11 +40,11 @@
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 
-                      {# Formulaire qui simule une method DELETE, pour supprimer une catégorie #}
-                      {# <form action="{{ path('admin_categories_remove', {id: category[0].id}) }}" method="post">
+                      {# Formulaire qui simule une method DELETE, pour supprimer une question #}
+                      <form action="{{ path('admin_questions_remove', {id: question.id}) }}" method="post">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="btn btn-danger">Supprimer</button>
-                      </form> #}
+                      </form>
 
                     </div>
                   </div>
