@@ -4,8 +4,10 @@ namespace App\Entity;
 
 use App\Repository\PropositionsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[ORM\Entity(repositoryClass: PropositionsRepository::class)]
+#[UniqueConstraint(columns: ['question_id', 'proposition'])]
 class Propositions
 {
     #[ORM\Id]

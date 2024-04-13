@@ -6,6 +6,7 @@ use App\Form\QuestionsFormType;
 use App\Repository\PropositionsRepository;
 use App\Repository\QuestionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class QuestionsController extends AbstractController
 {
     #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]
-    public function index(int $id, QuestionsRepository $questionsRepository, PropositionsRepository $propositionsRepository, EntityManagerInterface $manager, Request $request): Response
+    public function edit(int $id, QuestionsRepository $questionsRepository, PropositionsRepository $propositionsRepository, EntityManagerInterface $manager, Request $request): Response
     {
         $question = $questionsRepository->find($id);
         $propositions = $propositionsRepository->findBy(compact('question'));
