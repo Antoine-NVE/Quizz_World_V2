@@ -21,16 +21,15 @@ class QuestionnairesRepository extends ServiceEntityRepository
         parent::__construct($registry, Questionnaires::class);
     }
 
-    public function findByCategoryAndCountQuestions($category): array
+    public function findWithQuestions($id): ?Questionnaires
     {
         return $this->createQueryBuilder('qn')
-            ->select('qn', 'COUNT(q.id)')
+            ->select('qn', 'q')
             ->leftJoin('qn.questions', 'q')
-            ->groupBy('qn.id')
-            ->where('qn.category = :category')
-            ->setParameter('category', $category)
+            ->where('qn.id = :id')
+            ->setParameter('id', $id)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 
     //    /**

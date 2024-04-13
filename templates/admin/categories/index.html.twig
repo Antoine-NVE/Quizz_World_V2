@@ -19,37 +19,49 @@
       </thead>
       <tbody>
         {% for category in categories %}
+
+          {# Permet de récupérer le nombre de questions de la catégorie #}
+          {% set numberOfQuestions = 0 %}
+          {% for questionnaire in category.questionnaires %}
+            {% set numberOfQuestions = numberOfQuestions + questionnaire.questions | length %}
+          {% endfor %}
+
           <tr>
-            <th scope="row">{{ category[0].id }}</th>
-            <td>{{ category[0].title }}</td>
-            <td>{{ category[0].createdAt|date("d/m/Y à H:m:s") }}</td>
+            <th scope="row">{{ category.id }}</th>
+            <td>{{ category.title }}</td>
+            <td>{{ category.createdAt|date("d/m/Y à H:m:s") }}</td>
             <td>
-              <a href="#">{{ category[0].user.pseudo }}</a>
+              <a href="#">{{ category.user.pseudo }}</a>
             </td>
             <td>
-              {% if category[1] == 30 %}
-                <span class="badge text-bg-success">{{ category[1] }}</span>
+
+              {# Affiche un badge coloré en fonction du nombre de questions #}
+              {% if numberOfQuestions == 30 %}
+                <span class="badge text-bg-success">{{ numberOfQuestions }}</span>
+              {% elseif numberOfQuestions > 0 %}
+                <span class="badge text-bg-warning">{{ numberOfQuestions }}</span>
               {% else %}
-                <span class="badge text-bg-danger">{{ category[1] }}</span>
+                <span class="badge text-bg-danger">{{ numberOfQuestions }}</span>
               {% endif %}
+
             </td>
             <td>
-              {% if category[0].isActive %}
+              {% if category.isActive %}
                 <span class="badge text-bg-success">Oui</span>
               {% else %}
                 <span class="badge text-bg-danger">Non</span>
               {% endif %}
             </td>
             <td>
-              <a class="btn btn-sm btn-warning" href="{{ path('admin_categories_edit', {id: category[0].id}) }}">Modifier</a>
-              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ category[0].id }}Modal">Supprimer</button>
+              <a class="btn btn-sm btn-warning" href="{{ path('admin_categories_edit', {id: category.id}) }}">Modifier</a>
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ category.id }}Modal">Supprimer</button>
 
               {# Fenêtre modale #}
-              <div class="modal fade" id="{{ category[0].id }}Modal" tabindex="-1" aria-labelledby="{{ category[0].id }}ModalLabel" aria-hidden="true">
+              <div class="modal fade" id="{{ category.id }}Modal" tabindex="-1" aria-labelledby="{{ category.id }}ModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="{{ category[0].id }}ModalLabel">Supprimer la catégorie "{{ category[0].title }}" ?</h1>
+                      <h1 class="modal-title fs-5" id="{{ category.id }}ModalLabel">Supprimer la catégorie "{{ category.title }}" ?</h1>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -60,7 +72,7 @@
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 
                       {# Formulaire qui simule une method DELETE, pour supprimer une catégorie #}
-                      <form action="{{ path('admin_categories_remove', {id: category[0].id}) }}" method="post">
+                      <form action="{{ path('admin_categories_remove', {id: category.id}) }}" method="post">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="btn btn-danger">Supprimer</button>
                       </form>

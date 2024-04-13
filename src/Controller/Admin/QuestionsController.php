@@ -2,11 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Questions;
 use App\Form\QuestionsFormType;
-use App\Repository\PropositionsRepository;
 use App\Repository\QuestionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class QuestionsController extends AbstractController
 {
     #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(int $id, QuestionsRepository $questionsRepository, PropositionsRepository $propositionsRepository, EntityManagerInterface $manager, Request $request): Response
+    public function edit(int $id, QuestionsRepository $questionsRepository, EntityManagerInterface $manager, Request $request): Response
     {
-        $question = $questionsRepository->find($id);
-        $propositions = $propositionsRepository->findBy(compact('question'));
+        $question = $questionsRepository->findWithPropositions($id);
+        if (!$question) throw $this->createNotFoundException('Aucune question trouvée.');
+        $propositions = $question->getPropositions();
+
         $form = $this->createForm(QuestionsFormType::class, $question);
 
         for ($i = 0; $i < 4; $i++) {
@@ -65,15 +66,14 @@ class QuestionsController extends AbstractController
     }
 
     #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
-    public function remove(int $id, QuestionsRepository $questionsRepository, EntityManagerInterface $manager): Response
+    public function remove(Questions $question, EntityManagerInterface $manager): Response
     {
-        $question = $questionsRepository->find($id);
-        $id = $question->getQuestionnaire()->getId();
+        $questionnaireId = $question->getQuestionnaire()->getId();
 
         $manager->remove($question);
         $manager->flush();
 
         $this->addFlash('success', 'La question a bien été supprimée.');
-        return $this->redirectToRoute('admin_questionnaires_index', compact('id'));
+        return $this->redirectToRoute('admin_questionnaires_index', ['id' => $questionnaireId]);
     }
 }

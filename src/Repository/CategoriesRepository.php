@@ -23,6 +23,7 @@ class CategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, Categories::class);
     }
 
+    // Récupère toutes les catégories de l'accueil, avec les data pour la pagination
     public function findCompletesAndActivesWithScores(int $page, int $limit, string $sort, string $order, string $search, ?Users $user = null): array
     {
         // On multiplie par 3 car il y a 3 questionnaires par catégorie
@@ -62,6 +63,7 @@ class CategoriesRepository extends ServiceEntityRepository
         return $result;
     }
 
+    // Récupère une catégorie avec tous les éléments, pour le QuizzController
     public function findOneOrNullWithQuestionnaireQuestionsPropositionsAndScore(string $slug, string $difficulty, Users $user): ?Categories
     {
         return $this->createQueryBuilder('c')
@@ -81,18 +83,19 @@ class CategoriesRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findAllWithUserAndNumberOfQuestions(): array
+    // Récupère toutes les catégories pour la liste de la page admin
+    public function findAllWithQuestionnairesAndQuestionsAndUser(): array
     {
         return $this->createQueryBuilder('c')
-            ->select('c', 'u', 'COUNT(q.id)')
-            ->join('c.user', 'u')
+            ->select('c', 'qn', 'q', 'u')
             ->join('c.questionnaires', 'qn')
             ->leftJoin('qn.questions', 'q')
-            ->groupBy('c.id')
+            ->join('c.user', 'u')
             ->getQuery()
             ->getResult();
     }
 
+    // Récupère le nombre de catégories affichés pour l'accueil de l'admin
     public function countCompletedAndActives(): int
     {
         return $this->createQueryBuilder('c')
@@ -101,6 +104,19 @@ class CategoriesRepository extends ServiceEntityRepository
             ->andWhere('c.isActive = true')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    // Récupère une catégorie avec questionnaires et questions pour l'édition du CategoriesController
+    public function findOneOrNullWithQuestionnairesAndQuestions($id): ?Categories
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'qn', 'q')
+            ->join('c.questionnaires', 'qn')
+            ->leftJoin('qn.questions', 'q')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     //    /**

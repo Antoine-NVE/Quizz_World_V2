@@ -22,19 +22,22 @@
       <tbody>
         {% for questionnaire in questionnaires %}
           <tr>
-            <th scope="row">{{ questionnaire[0].id }}</th>
-            <td>{{ questionnaire[0].difficulty|capitalize }}</td>
+            <th scope="row">{{ questionnaire.id }}</th>
+            <td>{{ questionnaire.difficulty|capitalize }}</td>
             <td>
-              {% if questionnaire[1] == 10 %}
-                <span class="badge text-bg-success">{{ questionnaire[1] }}</span>
-              {% elseif questionnaire[1] > 0 %}
-                <span class="badge text-bg-warning">{{ questionnaire[1] }}</span>
+
+              {# Affiche un badge coloré en fonction du nombre de questions #}
+              {% if questionnaire.questions | length == 10 %}
+                <span class="badge text-bg-success">{{ questionnaire.questions|length }}</span>
+              {% elseif questionnaire.questions|length > 0 %}
+                <span class="badge text-bg-warning">{{ questionnaire.questions|length }}</span>
               {% else %}
-                <span class="badge text-bg-danger">{{ questionnaire[1] }}</span>
+                <span class="badge text-bg-danger">{{ questionnaire.questions|length }}</span>
               {% endif %}
+
             </td>
             <td>
-              <a class="btn btn-sm btn-primary" href="{{ path('admin_questionnaires_index', {id: questionnaire[0].id}) }}">Détails</a>
+              <a class="btn btn-sm btn-primary" href="{{ path('admin_questionnaires_index', {id: questionnaire.id}) }}">Détails</a>
             </td>
           </tr>
         {% endfor %}

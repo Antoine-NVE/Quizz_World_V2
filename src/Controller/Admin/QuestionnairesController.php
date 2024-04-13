@@ -19,10 +19,11 @@ class QuestionnairesController extends AbstractController
     #[Route('/{id}/ajouter', name: 'add')]
     public function add(int $id, QuestionnairesRepository $questionnairesRepository, QuestionsRepository $questionsRepository, EntityManagerInterface $manager, Request $request): Response
     {
-        $questionnaire = $questionnairesRepository->find($id);
+        $questionnaire = $questionnairesRepository->findWithQuestions($id);
+        $questions = $questionnaire->getQuestions();
 
         // Empêche d'avoir plus de 10 questions
-        if (count($questionsRepository->findBy(compact('questionnaire'))) >= 10) {
+        if (count($questions) >= 10) {
             throw $this->createAccessDeniedException('Ce questionnaire est déjà composé de 10 questions.');
         }
 
@@ -70,8 +71,9 @@ class QuestionnairesController extends AbstractController
     #[Route('/{id}', name: 'index')]
     public function index(int $id, QuestionnairesRepository $questionnairesRepository, QuestionsRepository $questionsRepository): Response
     {
-        $questionnaire = $questionnairesRepository->find($id);
-        $questions = $questionsRepository->findBy(['questionnaire' => $questionnaire]);
+        $questionnaire = $questionnairesRepository->findWithQuestions($id);
+        if (!$questionnaire) throw $this->createNotFoundException('Aucun questionnaire trouvé.');
+        $questions = $questionnaire->getQuestions();
 
         return $this->render('admin/questionnaires/index.html.twig', compact('questionnaire', 'questions'));
     }

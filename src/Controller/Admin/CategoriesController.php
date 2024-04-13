@@ -6,7 +6,6 @@ use App\Entity\Categories;
 use App\Entity\Questionnaires;
 use App\Form\CategoriesFormType;
 use App\Repository\CategoriesRepository;
-use App\Repository\QuestionnairesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +20,7 @@ class CategoriesController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(CategoriesRepository $categoriesRepository): Response
     {
-        $categories = $categoriesRepository->findAllWithUserAndNumberOfQuestions();
+        $categories = $categoriesRepository->findAllWithQuestionnairesAndQuestionsAndUser();
 
         return $this->render('admin/categories/index.html.twig', compact('categories'));
     }
@@ -73,14 +72,13 @@ class CategoriesController extends AbstractController
     public function edit(
         int $id,
         CategoriesRepository $categoriesRepository,
-        QuestionnairesRepository $questionnairesRepository,
         SluggerInterface $slugger,
         EntityManagerInterface $manager,
         Request $request
     ): Response {
-        // Je n'ai pas réussi à n'utiliser qu'une seule requête, bien que j'y arrive sans soucis avec phpMyAdmin
-        $category = $categoriesRepository->find($id);
-        $questionnaires = $questionnairesRepository->findByCategoryAndCountQuestions($category);
+        $category = $categoriesRepository->findOneOrNullWithQuestionnairesAndQuestions($id);
+        if (!$category) throw $this->createNotFoundException('Catégorie non trouvée.');
+        $questionnaires = $category->getQuestionnaires();
 
         // On crée le formulaire en spécifiant que l'input image n'est pas obligatoire
         $form = $this->createForm(CategoriesFormType::class, $category, ['image_required' => false]);
