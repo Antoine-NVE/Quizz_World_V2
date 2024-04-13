@@ -28,6 +28,7 @@ class QuestionsRepository extends ServiceEntityRepository
             ->leftJoin('q.propositions', 'p')
             ->where('q.id = :id')
             ->setParameter('id', $id)
+            ->orderBy('p.id')
             ->getQuery()
             ->getOneOrNullResult();
     }
