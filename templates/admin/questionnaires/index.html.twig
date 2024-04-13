@@ -19,8 +19,20 @@
         {% for question in questions %}
           <tr>
             <th scope="row">{{ question.id }}</th>
-            <td>{{ question.question }}</td>
-            <td>{{ question.answer }}</td>
+            <td>
+              {% if question.question | length > 80 %}
+                {{ question.question|slice(0, 79) }}...
+              {% else %}
+                {{ question.question }}
+              {% endif %}
+            </td>
+            <td>
+              {% if question.answer | length > 16 %}
+                {{ question.answer|slice(0, 15) }}...
+              {% else %}
+                {{ question.answer }}
+              {% endif %}
+            </td>
             <td>
               <a class="btn btn-sm btn-warning" href="{{ path('admin_questions_edit', {id: question.id}) }}">Modifier</a>
               <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ question.id }}Modal">Supprimer</button>
