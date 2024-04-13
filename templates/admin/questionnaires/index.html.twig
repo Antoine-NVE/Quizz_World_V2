@@ -56,5 +56,8 @@
         {% endfor %}
       </tbody>
     </table>
+    {% if questions | length < 10 %}
+      <a class="btn btn-primary d-block" href="{{ path('admin_questionnaires_add', {id: questionnaire.id}) }}">Ajouter une question</a>
+    {% endif %}
   </div>
 {% endblock %}
