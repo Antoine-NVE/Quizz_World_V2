@@ -52,8 +52,6 @@ class QuizzController extends AbstractController
         $questions = $questionnaire->getQuestions();
         $bestScore = $questionnaire->getScores()[0];
 
-        // dd($category, $questionnaire, $questions, $bestScore);
-
         // Récupère les informations de session
         $session = $request->getSession();
         $answers = $session->get('answers');

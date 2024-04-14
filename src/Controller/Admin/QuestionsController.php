@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/questions', name: 'admin_questions_')]
+#[Route('/admin/questions', name: 'admin_questions_')]
 class QuestionsController extends AbstractController
 {
     #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]

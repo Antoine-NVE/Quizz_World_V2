@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/questionnaires', name: 'admin_questionnaires_')]
+#[Route('/admin/questionnaires', name: 'admin_questionnaires_')]
 class QuestionnairesController extends AbstractController
 {
     #[Route('/{id}/ajouter', name: 'add')]

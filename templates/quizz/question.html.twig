@@ -1,17 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ category.title }}
+{% block title %}
+  {{ category.title }}
   - Niveau
   {{ questionnaire.difficulty }}
 {% endblock %}
 
 {% block body %}
-  <h1>{{ category.title }}
+  <h1>
+    {{ category.title }}
     - Niveau
-    {{ questionnaire.difficulty }}</h1>
-  <h5>Question n°{{ number }}
+    {{ questionnaire.difficulty }}
+  </h1>
+  <h5>
+    Question n°{{ number }}
     :
-    {{ question.question }}</h5>
+    {{ question.question }}
+  </h5>
 
   {% if not next %}
     {{ form_start(quizzForm)}}
