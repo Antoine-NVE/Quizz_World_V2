@@ -4,5 +4,47 @@
   <div class="list-group col-2">
     {% include "admin/partials/navbar.html.twig" %}
   </div>
-  <div class="col-10"></div>
+  <div class="col-10">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Pseudo</th>
+          <th scope="col">Email</th>
+          <th scope="col">Créée le</th>
+          <th scope="col">Vérifié</th>
+          <th scope="col">Rôle</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <th scope="row">{{ user.id }}</th>
+            <td>{{ user.pseudo }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.createdAt|date("d/m/Y à H:m:s") }}</td>
+            <td>
+              {% if user.isVerified %}
+                <span class="badge text-bg-success">Oui</span>
+              {% else %}
+                <span class="badge text-bg-danger">Non</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if user.roles[0] == 'ROLE_ADMIN' %}
+                <span class="badge text-bg-primary">{{ user.roles[0] }}</span>
+              {% else %}
+                <span class="badge text-bg-secondary">{{ user.roles[0] }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <a class="btn btn-sm btn-warning" href="#">Modifier</a>
+              <a class="btn btn-sm btn-danger" href="#">Supprimer</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock body %}

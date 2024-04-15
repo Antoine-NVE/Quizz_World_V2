@@ -4,6 +4,6 @@
 <a href="{{ path('admin_categories_index') }}" class="list-group-item list-group-item-action {{ app.current_route == 'admin_categories_index' ? 'active' : '' }}">
   Liste des catégories
 </a>
-<a href="#" class="list-group-item list-group-item-action {{ app.current_route == 'admin_users' ? 'active' : '' }}">
+<a href="{{ path('admin_users_index') }}" class="list-group-item list-group-item-action {{ app.current_route == 'admin_users_index' ? 'active' : '' }}">
   Liste des utilisateurs
 </a>
