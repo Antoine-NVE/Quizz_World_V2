@@ -31,7 +31,7 @@
             <td>{{ category.title }}</td>
             <td>{{ category.createdAt|date("d/m/Y à H:m:s") }}</td>
             <td>
-              <a href="#">{{ category.user.pseudo }}</a>
+              <a href="{{ path('admin_users_edit', {id: category.user.id}) }}">{{ category.user.pseudo }}</a>
             </td>
             <td>
 
