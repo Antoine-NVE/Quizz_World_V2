@@ -39,7 +39,7 @@
               {% endif %}
             </td>
             <td>
-              <a class="btn btn-sm btn-warning" href="#">Modifier</a>
+              <a class="btn btn-sm btn-warning" href="{{ path('admin_users_edit', {id: user.id}) }}">Modifier</a>
               <a class="btn btn-sm btn-danger" href="#">Supprimer</a>
             </td>
           </tr>

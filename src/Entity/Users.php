@@ -69,7 +69,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
@@ -138,7 +138,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->pseudo;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setPseudo(?string $pseudo): static
     {
         $this->pseudo = $pseudo;
 

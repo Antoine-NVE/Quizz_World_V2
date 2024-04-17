@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Form\UsersFormType;
 use App\Repository\UsersRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,13 +22,23 @@ class UsersController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit')]
-    public function edit(int $id, UsersRepository $usersRepository, Request $request): Response
+    public function edit(int $id, UsersRepository $usersRepository, EntityManagerInterface $manager, Request $request): Response
     {
         $user = $usersRepository->find($id);
         if (!$user) throw $this->createNotFoundException('Utilisateur introuvable');
 
         $form = $this->createForm(UsersFormType::class, $user);
         $form->get('role')->setData($user->getRoles()[0]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
+            return $this->redirectToRoute('admin_users_index');
+        }
 
         return $this->render('admin/users/edit.html.twig', compact('form'));
     }
