@@ -50,7 +50,7 @@ class QuizzController extends AbstractController
         if (!$category) throw $this->createNotFoundException('Catégorie ou difficulté incorrecte');
         $questionnaire = $category->getQuestionnaires()[0];
         $questions = $questionnaire->getQuestions();
-        $bestScore = $questionnaire->getScores()[0];
+        $score = $questionnaire->getScores()[0];
 
         // Récupère les informations de session
         $session = $request->getSession();
@@ -62,7 +62,10 @@ class QuizzController extends AbstractController
         }
 
         // Incrémente le score en fonction des bonnes réponses
-        $score = 0;
+        $actualScore = new Scores();
+        $actualScore->setUser($user);
+        $actualScore->setQuestionnaire($questionnaire);
+        $actualScore->setScore(0);
         for ($i = 1; $i <= 10; $i++) {
             // S'assure en premier lieu que l'utilisateur n'a pas zappé une question
             if (!array_key_exists($i, $answers)) {
@@ -75,27 +78,23 @@ class QuizzController extends AbstractController
 
             // Incrémente
             if ($questions[$i - 1]->getAnswer() === $answers[$i]) {
-                $score++;
+                $actualScore->setScore($actualScore->getScore() + 1);
             }
         }
 
         // Crée ou modifie le meilleur score
-        if (!$bestScore) {
-            $bestScore = new Scores();
-            $bestScore->setQuestionnaire($questionnaire);
-            $bestScore->setUser($user);
-            $bestScore->setScore($score);
+        if (!$score) {
+            // On persiste directement le score effectué
+            $entityManager->persist($actualScore);
+        } elseif ($score->getScore() < $actualScore->getScore()) {
+            // On modifie le meilleure score
+            $score->setScore($actualScore->getScore());
 
-            $entityManager->persist($bestScore);
-            $entityManager->flush();
-        } elseif ($bestScore->getScore() < $score) {
-            $bestScore->setScore($score);
-
-            $entityManager->persist($bestScore);
-            $entityManager->flush();
+            $entityManager->persist($score);
         }
-        $score = $bestScore;
+        $entityManager->flush();
 
+        $score = $actualScore;
         return $this->render('quizz/end.html.twig', compact('category', 'questionnaire', 'score'));
     }
 
