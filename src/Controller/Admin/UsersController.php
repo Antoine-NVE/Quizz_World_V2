@@ -44,7 +44,7 @@ class UsersController extends AbstractController
         return $this->render('admin/users/edit.html.twig', compact('form'));
     }
 
-    #[Route('/{id}', name: 'edit', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
     public function remove(Users $user, EntityManagerInterface $manager): Response
     {
         $manager->remove($user);

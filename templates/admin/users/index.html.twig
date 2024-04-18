@@ -40,7 +40,33 @@
             </td>
             <td>
               <a class="btn btn-sm btn-warning" href="{{ path('admin_users_edit', {id: user.id}) }}">Modifier</a>
-              <a class="btn btn-sm btn-danger" href="#">Supprimer</a>
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ user.id }}Modal">Supprimer</button>
+
+              {# Fenêtre modale #}
+              <div class="modal fade" id="{{ user.id }}Modal" tabindex="-1" aria-labelledby="{{ user.id }}ModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="{{ user.id }}ModalLabel">Supprimer l'utilisateur "{{ user.pseudo }}" ?</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Cela va également supprimer ses scores ainsi que le contenu qu'il a créé.
+                      <strong>Cette action est irréversible.</strong>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+                      {# Formulaire qui simule une method DELETE, pour supprimer une catégorie #}
+                      <form action="{{ path('admin_users_remove', {id: user.id}) }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
         {% endfor %}
