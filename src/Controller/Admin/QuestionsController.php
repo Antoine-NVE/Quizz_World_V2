@@ -36,30 +36,33 @@ class QuestionsController extends AbstractController
             }
         }
 
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            for ($i = 0; $i < 4; $i++) {
-                // On récupère la proposition de l'input
-                $proposition = $form->get('p' . $i + 1)->getData();
+            if ($form->isSubmitted() && $form->isValid()) {
+                for ($i = 0; $i < 4; $i++) {
+                    // On récupère la proposition de l'input
+                    $proposition = $form->get('p' . $i + 1)->getData();
 
-                // On set
-                $propositions[$i]->setProposition($proposition);
+                    // On set
+                    $propositions[$i]->setProposition($proposition);
 
-                // Si c'est la bonne réponse, on modifie l'objet
-                if ($form->get('answer')->getData() === 'a' . $i + 1) {
-                    $question->setAnswer($proposition);
+                    // Si c'est la bonne réponse, on modifie l'objet
+                    if ($form->get('answer')->getData() === 'a' . $i + 1) {
+                        $question->setAnswer($proposition);
 
-                    $manager->persist($question);
+                        $manager->persist($question);
+                    }
+
+                    $manager->persist($propositions[$i]);
                 }
 
-                $manager->persist($propositions[$i]);
+                $manager->flush();
+                $this->addFlash('success', 'La question a bien été modifiée.');
+                return $this->redirectToRoute('admin_questionnaires_index', ['id' => $question->getQuestionnaire()->getId()]);
             }
-
-            $manager->flush();
-
-            $this->addFlash('success', 'La question a bien été modifiée.');
-            return $this->redirectToRoute('admin_questionnaires_index', ['id' => $question->getQuestionnaire()->getId()]);
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
         }
 
         return $this->render('admin/questions/edit.html.twig', compact('form', 'question'));
@@ -70,10 +73,15 @@ class QuestionsController extends AbstractController
     {
         $questionnaireId = $question->getQuestionnaire()->getId();
 
-        $manager->remove($question);
-        $manager->flush();
+        try {
+            $manager->remove($question);
 
-        $this->addFlash('success', 'La question a bien été supprimée.');
+            $manager->flush();
+            $this->addFlash('success', 'La question a bien été supprimée.');
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
+        }
+
         return $this->redirectToRoute('admin_questionnaires_index', ['id' => $questionnaireId]);
     }
 }

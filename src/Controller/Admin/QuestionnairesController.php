@@ -20,6 +20,7 @@ class QuestionnairesController extends AbstractController
     public function add(int $id, QuestionnairesRepository $questionnairesRepository, QuestionsRepository $questionsRepository, EntityManagerInterface $manager, Request $request): Response
     {
         $questionnaire = $questionnairesRepository->findWithQuestions($id);
+        if (!$questionnaire) throw $this->createNotFoundException('Aucun questionnaire trouvé.');
         $questions = $questionnaire->getQuestions();
 
         // Empêche d'avoir plus de 10 questions
@@ -31,38 +32,40 @@ class QuestionnairesController extends AbstractController
         $question->setQuestionnaire($questionnaire);
         $form = $this->createForm(QuestionsFormType::class, $question);
 
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $propositions = [
-                new Propositions(),
-                new Propositions(),
-                new Propositions(),
-                new Propositions()
-            ];
+            if ($form->isSubmitted() && $form->isValid()) {
+                $propositions = [
+                    new Propositions(),
+                    new Propositions(),
+                    new Propositions(),
+                    new Propositions()
+                ];
 
-            for ($i = 0; $i < 4; $i++) {
-                // On récupère la proposition de l'input
-                $proposition = $form->get('p' . $i + 1)->getData();
+                for ($i = 0; $i < 4; $i++) {
+                    // On récupère la proposition de l'input
+                    $proposition = $form->get('p' . $i + 1)->getData();
 
-                // On set
-                $propositions[$i]->setProposition($proposition);
-                $propositions[$i]->setQuestion($question);
+                    // On set
+                    $propositions[$i]->setProposition($proposition);
+                    $propositions[$i]->setQuestion($question);
 
-                // Si c'est la bonne réponse, on modifie l'objet
-                if ($form->get('answer')->getData() === 'a' . $i + 1) {
-                    $question->setAnswer($proposition);
+                    // Si c'est la bonne réponse, on modifie l'objet
+                    if ($form->get('answer')->getData() === 'a' . $i + 1) {
+                        $question->setAnswer($proposition);
 
-                    $manager->persist($question);
+                        $manager->persist($question);
+                    }
+                    $manager->persist($propositions[$i]);
                 }
 
-                $manager->persist($propositions[$i]);
+                $manager->flush();
+                $this->addFlash('success', 'La question a bien été créée.');
+                return $this->redirectToRoute('admin_questionnaires_index', ['id' => $questionnaire->getId()]);
             }
-
-            $manager->flush();
-
-            $this->addFlash('success', 'La question a bien été créée.');
-            return $this->redirectToRoute('admin_questionnaires_index', ['id' => $questionnaire->getId()]);
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
         }
 
         return $this->render('admin/questionnaires/add.html.twig', compact('form', 'questionnaire'));

@@ -82,17 +82,22 @@ class QuizzController extends AbstractController
             }
         }
 
-        // Crée ou modifie le meilleur score
-        if (!$score) {
-            // On persiste directement le score effectué
-            $entityManager->persist($actualScore);
-        } elseif ($score->getScore() < $actualScore->getScore()) {
-            // On modifie le meilleure score
-            $score->setScore($actualScore->getScore());
+        try {
+            // Crée ou modifie le meilleur score
+            if (!$score) {
+                // On persiste directement le score effectué
+                $entityManager->persist($actualScore);
+            } elseif ($score->getScore() < $actualScore->getScore()) {
+                // On modifie le meilleure score
+                $score->setScore($actualScore->getScore());
 
-            $entityManager->persist($score);
+                $entityManager->persist($score);
+            }
+
+            $entityManager->flush();
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', 'Une erreur est survenue.');
         }
-        $entityManager->flush();
 
         $score = $actualScore;
         return $this->render('quizz/end.html.twig', compact('category', 'questionnaire', 'score'));

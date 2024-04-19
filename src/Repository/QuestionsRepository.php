@@ -25,7 +25,7 @@ class QuestionsRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('q')
             ->select('q', 'p')
-            ->leftJoin('q.propositions', 'p')
+            ->join('q.propositions', 'p')
             ->where('q.id = :id')
             ->setParameter('id', $id)
             ->orderBy('p.id')

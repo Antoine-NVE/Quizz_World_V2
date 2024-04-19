@@ -31,14 +31,18 @@ class UsersController extends AbstractController
         $form = $this->createForm(UsersFormType::class, $user);
         $form->get('role')->setData($user->getRoles()[0]);
 
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $manager->persist($user);
-            $manager->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $manager->persist($user);
+                $manager->flush();
 
-            $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
-            return $this->redirectToRoute('admin_users_index');
+                $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
+                return $this->redirectToRoute('admin_users_index');
+            }
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
         }
 
         return $this->render('admin/users/edit.html.twig', compact('form'));
@@ -47,10 +51,17 @@ class UsersController extends AbstractController
     #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
     public function remove(Users $user, EntityManagerInterface $manager): Response
     {
-        $manager->remove($user);
-        $manager->flush();
+        try {
+            $manager->persist(new Users());
+            $manager->remove($user);
 
-        $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
-        return $this->redirectToRoute(('admin_users_index'));
+            $manager->flush();
+
+            $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
+        }
+
+        return $this->redirectToRoute('admin_users_index');
     }
 }

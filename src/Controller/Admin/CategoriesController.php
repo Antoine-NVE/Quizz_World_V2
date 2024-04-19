@@ -31,38 +31,41 @@ class CategoriesController extends AbstractController
         $category = new Categories();
         $form = $this->createForm(CategoriesFormType::class, $category);
 
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category->setSlug($slugger->slug($category->getTitle())->lower());
-            $category->setUser($user);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $category->setSlug($slugger->slug($category->getTitle())->lower());
+                $category->setUser($user);
 
-            // On récupère l'image
-            $image = $form->get('image')->getData();
+                // On récupère l'image
+                $image = $form->get('image')->getData();
 
-            // On définit son nom
-            $imageName = uniqid() . '.webp';
+                // On définit son nom
+                $imageName = uniqid() . '.webp';
 
-            // On indique à l'objet le nom de l'image
-            $category->setImage($imageName);
+                // On indique à l'objet le nom de l'image
+                $category->setImage($imageName);
 
-            // On la crée dans le dossier public/img/
-            $image->move($this->getParameter('images_directory'), $category->getImage());
+                // On la crée dans le dossier public/img/
+                $image->move($this->getParameter('images_directory'), $category->getImage());
 
-            $difficulties = ['facile', 'moyen', 'difficile'];
-            foreach ($difficulties as $difficulty) {
-                $questionnaire = new Questionnaires();
-                $questionnaire->setDifficulty($difficulty);
-                $questionnaire->setCategory($category);
+                $difficulties = ['facile', 'moyen', 'difficile'];
+                foreach ($difficulties as $difficulty) {
+                    $questionnaire = new Questionnaires();
+                    $questionnaire->setDifficulty($difficulty);
+                    $questionnaire->setCategory($category);
 
-                $manager->persist($questionnaire);
+                    $manager->persist($questionnaire);
+                }
+                $manager->persist($category);
+
+                $manager->flush();
+                $this->addFlash('success', 'La catégorie a bien été créée');
+                return $this->redirectToRoute('admin_categories_index');
             }
-
-            $manager->persist($category);
-            $manager->flush();
-
-            $this->addFlash('success', 'La catégorie a bien été créée');
-            return $this->redirectToRoute('admin_categories_index');
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
         }
 
         return $this->render('admin/categories/add.html.twig', compact('form'));
@@ -83,28 +86,32 @@ class CategoriesController extends AbstractController
         // On crée le formulaire en spécifiant que l'input image n'est pas obligatoire
         $form = $this->createForm(CategoriesFormType::class, $category, ['image_required' => false]);
 
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category->setSlug($slugger->slug($category->getTitle())->lower());
+            if ($form->isSubmitted() && $form->isValid()) {
+                $category->setSlug($slugger->slug($category->getTitle())->lower());
 
-            // On récupère l'image du formulaire
-            $image = $form->get('image')->getData();
+                // On récupère l'image du formulaire
+                $image = $form->get('image')->getData();
 
-            // Si elle n'est pas null, on modifie celle qui est stockée
-            if ($image) {
-                // On récupère le nom de la base
-                $imageName = $category->getImage();
+                // Si elle n'est pas null, on modifie celle qui est stockée
+                if ($image) {
+                    // On récupère le nom de la base
+                    $imageName = $category->getImage();
 
-                // On la modifie dans le dossier public/img/
-                $image->move($this->getParameter('images_directory'), $imageName);
+                    // On la modifie dans le dossier public/img/
+                    $image->move($this->getParameter('images_directory'), $imageName);
+                }
+
+                $manager->persist($category);
+
+                $manager->flush();
+                $this->addFlash('success', 'La catégorie a bien été modifiée');
+                return $this->redirectToRoute('admin_categories_index');
             }
-
-            $manager->persist($category);
-            $manager->flush();
-
-            $this->addFlash('success', 'La catégorie a bien été modifiée');
-            return $this->redirectToRoute('admin_categories_index');
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
         }
 
         return $this->render('admin/categories/edit.html.twig', compact('form', 'category', 'questionnaires'));
@@ -120,11 +127,15 @@ class CategoriesController extends AbstractController
         // On supprime l'image physique
         unlink($imageName);
 
-        // On supprime la catégorie
-        $manager->remove($category);
-        $manager->flush();
+        try {
+            $manager->remove($category);
 
-        $this->addFlash('success', 'La catégorie a bien été supprimée');
+            $manager->flush();
+            $this->addFlash('success', 'La catégorie a bien été supprimée');
+        } catch (\Throwable $th) {
+            $this->addFlash('danger', $th->getMessage());
+        }
+
         return $this->redirectToRoute('admin_categories_index');
     }
 }
