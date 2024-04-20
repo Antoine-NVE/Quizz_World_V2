@@ -2,10 +2,10 @@
 
 {% block body %}
   <div class="list-group col-2">
-    {% include "admin/partials/navbar.html.twig" %}
+    {% include "profile/partials/navbar.html.twig" %}
   </div>
   <div class="col-10">
-    <a class="btn btn-primary mb-3" href="{{ path('admin_categories_index') }}">Retour</a>
+    <a class="btn btn-primary mb-3" href="{{ path('profile_categories_index') }}">Retour</a>
     <div class="pb-5 border-bottom">
       {{ form_start(form) }}
       {{ form_end(form) }}
@@ -13,7 +13,6 @@
     <table class="table mt-5">
       <thead>
         <tr>
-          <th scope="col">ID</th>
           <th scope="col">Difficulté</th>
           <th scope="col">Questions</th>
           <th scope="col">Actions</th>
@@ -22,8 +21,7 @@
       <tbody>
         {% for questionnaire in questionnaires %}
           <tr>
-            <th scope="row">{{ questionnaire.id }}</th>
-            <td>{{ questionnaire.difficulty|capitalize }}</td>
+            <th scope="row">{{ questionnaire.difficulty|capitalize }}</th>
             <td>
 
               {# Affiche un badge coloré en fonction du nombre de questions #}
@@ -37,7 +35,7 @@
 
             </td>
             <td>
-              <a class="btn btn-sm btn-primary" href="{{ path('admin_questionnaires_index', {id: questionnaire.id}) }}">Détails</a>
+              {# <a class="btn btn-sm btn-primary" href="{{ path('admin_questionnaires_index', {id: questionnaire.id}) }}">Détails</a> #}
             </td>
           </tr>
         {% endfor %}

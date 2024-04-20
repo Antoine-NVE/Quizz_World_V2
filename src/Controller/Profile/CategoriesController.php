@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Profile;
 
 use App\Entity\Categories;
 use App\Entity\Questionnaires;
@@ -10,19 +10,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[Route('/admin/categories', name: 'admin_categories_')]
+#[Route('/profil/categories', name: 'profile_categories_')]
 class CategoriesController extends AbstractController
 {
     #[Route('/', name: 'index')]
     public function index(CategoriesRepository $categoriesRepository): Response
     {
-        $categories = $categoriesRepository->findAllWithQuestionnairesAndQuestionsAndUser();
+        $categories = $categoriesRepository->findAllWithQuestionnairesAndQuestionsByUser($this->getUser());
 
-        return $this->render('admin/categories/index.html.twig', compact('categories'));
+        return $this->render('profile/categories/index.html.twig', compact('categories'));
     }
 
     #[Route('/ajouter', name: 'add')]
@@ -62,24 +61,24 @@ class CategoriesController extends AbstractController
 
                 $manager->flush();
                 $this->addFlash('success', 'La catégorie a bien été créée');
-                return $this->redirectToRoute('admin_categories_index');
+                return $this->redirectToRoute('profile_categories_index');
             }
         } catch (\Throwable $th) {
-            $this->addFlash('danger', $th->getMessage());
+            $this->addFlash('danger', 'Une erreur est survenue.');
         }
 
-        return $this->render('admin/categories/add.html.twig', compact('form'));
+        return $this->render('profile/categories/add.html.twig', compact('form'));
     }
 
-    #[Route('/{id}', name: 'edit', methods: ['GET', 'POST'])]
+    #[Route('/{slug}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(
-        int $id,
+        string $slug,
         CategoriesRepository $categoriesRepository,
         SluggerInterface $slugger,
         EntityManagerInterface $manager,
         Request $request
     ): Response {
-        $category = $categoriesRepository->findOneOrNullWithQuestionnairesAndQuestions($id);
+        $category = $categoriesRepository->findOneOrNullWithQuestionnairesAndQuestionsBySlugAndUser($slug, $this->getUser());
         if (!$category) throw $this->createNotFoundException('Catégorie non trouvée.');
         $questionnaires = $category->getQuestionnaires();
 
@@ -108,18 +107,21 @@ class CategoriesController extends AbstractController
 
                 $manager->flush();
                 $this->addFlash('success', 'La catégorie a bien été modifiée');
-                return $this->redirectToRoute('admin_categories_index');
+                return $this->redirectToRoute('profile_categories_index');
             }
         } catch (\Throwable $th) {
             $this->addFlash('danger', $th->getMessage());
         }
 
-        return $this->render('admin/categories/edit.html.twig', compact('form', 'category', 'questionnaires'));
+        return $this->render('profile/categories/edit.html.twig', compact('form', 'category', 'questionnaires'));
     }
 
-    #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
-    public function remove(Categories $category, EntityManagerInterface $manager): Response
+    #[Route('/{slug}', name: 'remove', methods: ['DELETE'])]
+    public function remove(string $slug, CategoriesRepository $categoriesRepository, EntityManagerInterface $manager): Response
     {
+        $category = $categoriesRepository->findOneBy(['slug' => $slug, 'user' => $this->getUser()]);
+        if (!$category) throw $this->createNotFoundException('Catégorie non trouvée.');
+
         // On récupère le nom de l'image, et on concatène avec le répertoire complet
         $image = $category->getImage();
         $imageName = $this->getParameter('images_directory') . '/' . $image;
@@ -137,6 +139,6 @@ class CategoriesController extends AbstractController
             $this->addFlash('danger', $th->getMessage());
         }
 
-        return $this->redirectToRoute('admin_categories_index');
+        return $this->redirectToRoute('profile_categories_index');
     }
 }

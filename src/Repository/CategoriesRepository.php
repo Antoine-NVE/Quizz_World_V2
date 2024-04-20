@@ -131,6 +131,32 @@ class CategoriesRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function findAllWithQuestionnairesAndQuestionsByUser(Users $user): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'qn', 'q')
+            ->join('c.questionnaires', 'qn')
+            ->leftJoin('qn.questions', 'q')
+            ->where('c.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneOrNullWithQuestionnairesAndQuestionsBySlugAndUser(string $slug, Users $user)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'qn', 'q')
+            ->join('c.questionnaires', 'qn')
+            ->leftJoin('qn.questions', 'q')
+            ->where('c.slug = :slug')
+            ->andWhere('c.user = :user')
+            ->setParameter('slug', $slug)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Categories[] Returns an array of Categories objects
     //     */
