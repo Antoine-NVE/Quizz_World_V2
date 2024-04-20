@@ -124,13 +124,14 @@ class CategoriesController extends AbstractController
         $image = $category->getImage();
         $imageName = $this->getParameter('images_directory') . '/' . $image;
 
-        // On supprime l'image physique
-        unlink($imageName);
-
         try {
             $manager->remove($category);
 
             $manager->flush();
+
+            // Si tout s'est bien passé, on peut supprimer l'image physique
+            unlink($imageName);
+
             $this->addFlash('success', 'La catégorie a bien été supprimée');
         } catch (\Throwable $th) {
             $this->addFlash('danger', $th->getMessage());

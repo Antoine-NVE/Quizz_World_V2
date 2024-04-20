@@ -87,7 +87,8 @@ class QuestionsFormType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank()
-                ]
+                ],
+                'help' => 'Les propositions seront automatiquement mélangées.'
             ])
             ->add('anecdote', options: [
                 'required' => false,
