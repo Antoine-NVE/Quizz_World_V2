@@ -36,7 +36,7 @@ class QuestionsRepository extends ServiceEntityRepository
     public function findWithPropositionsBySlugDifficultyNumberAndUser($slug, $difficulty, $number, $user): ?Questions
     {
         return $this->createQueryBuilder('q')
-            ->select('q', 'p')
+            ->select('c', 'qn', 'q', 'p')
             ->join('q.propositions', 'p')
             ->join('q.questionnaire', 'qn')
             ->join('qn.category', 'c')

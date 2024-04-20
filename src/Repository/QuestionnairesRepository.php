@@ -35,7 +35,7 @@ class QuestionnairesRepository extends ServiceEntityRepository
     public function findWithQuestionsBySlugDifficultyAndUser($slug, $difficulty, $user): ?Questionnaires
     {
         return $this->createQueryBuilder('qn')
-            ->select('qn', 'q')
+            ->select('c', 'qn', 'q')
             ->leftJoin('qn.questions', 'q')
             ->join('qn.category', 'c')
             ->where('c.slug = :slug')

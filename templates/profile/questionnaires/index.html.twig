@@ -32,7 +32,7 @@
               {% endif %}
             </td>
             <td>
-              <a class="btn btn-sm btn-warning" href="{{ path('profile_questions_edit', {slug: question.questionnaire.category.slug, difficulty: question.questionnaire.difficulty, number: loop.index}) }}">
+              <a class="btn btn-sm btn-warning" href="{{ path('profile_questions_edit', {slug: questionnaire.category.slug, difficulty: questionnaire.difficulty, number: loop.index}) }}">
                 Modifier
               </a>
               <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#{{ question.id }}Modal">Supprimer</button>
