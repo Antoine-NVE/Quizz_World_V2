@@ -32,6 +32,22 @@ class QuestionnairesRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findWithQuestionsBySlugDifficultyAndUser($slug, $difficulty, $user): ?Questionnaires
+    {
+        return $this->createQueryBuilder('qn')
+            ->select('qn', 'q')
+            ->leftJoin('qn.questions', 'q')
+            ->join('qn.category', 'c')
+            ->where('c.slug = :slug')
+            ->andWhere('qn.difficulty = :difficulty')
+            ->andWhere('c.user = :user')
+            ->setParameter('slug', $slug)
+            ->setParameter('difficulty', $difficulty)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Questionnaires[] Returns an array of Questionnaires objects
     //     */

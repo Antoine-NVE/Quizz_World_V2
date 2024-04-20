@@ -62,7 +62,7 @@
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 
                       {# Formulaire qui simule une method DELETE, pour supprimer une catégorie #}
-                      <form action="{{ path('profile_categories_remove', {slug: category.slug}) }}" method="post">
+                      <form action="{{ path('profile_categories_remove', {id: category.id}) }}" method="post">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="btn btn-danger">Supprimer</button>
                       </form>

@@ -110,16 +110,16 @@ class CategoriesController extends AbstractController
                 return $this->redirectToRoute('profile_categories_index');
             }
         } catch (\Throwable $th) {
-            $this->addFlash('danger', $th->getMessage());
+            $this->addFlash('danger', 'Une erreur est survenue.');
         }
 
         return $this->render('profile/categories/edit.html.twig', compact('form', 'category', 'questionnaires'));
     }
 
-    #[Route('/{slug}', name: 'remove', methods: ['DELETE'])]
-    public function remove(string $slug, CategoriesRepository $categoriesRepository, EntityManagerInterface $manager): Response
+    #[Route('/{id}', name: 'remove', methods: ['DELETE'])]
+    public function remove(int $id, CategoriesRepository $categoriesRepository, EntityManagerInterface $manager): Response
     {
-        $category = $categoriesRepository->findOneBy(['slug' => $slug, 'user' => $this->getUser()]);
+        $category = $categoriesRepository->findOneBy(['id' => $id, 'user' => $this->getUser()]);
         if (!$category) throw $this->createNotFoundException('Catégorie non trouvée.');
 
         // On récupère le nom de l'image, et on concatène avec le répertoire complet
@@ -136,7 +136,7 @@ class CategoriesController extends AbstractController
 
             $this->addFlash('success', 'La catégorie a bien été supprimée');
         } catch (\Throwable $th) {
-            $this->addFlash('danger', $th->getMessage());
+            $this->addFlash('danger', 'Une erreur est survenue.');
         }
 
         return $this->redirectToRoute('profile_categories_index');

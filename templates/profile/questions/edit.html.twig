@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <div class="list-group col-2">
+    {% include "profile/partials/navbar.html.twig" %}
+  </div>
+  <div class="col-10">
+    <a class="btn btn-primary mb-3" href="{{ path('profile_questionnaires_index', {slug: question.questionnaire.category.slug, difficulty: question.questionnaire.difficulty}) }}">Retour</a>
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+  </div>
+{% endblock %}

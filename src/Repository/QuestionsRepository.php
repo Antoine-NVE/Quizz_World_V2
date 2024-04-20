@@ -33,6 +33,40 @@ class QuestionsRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findWithPropositionsBySlugDifficultyNumberAndUser($slug, $difficulty, $number, $user): ?Questions
+    {
+        return $this->createQueryBuilder('q')
+            ->select('q', 'p')
+            ->join('q.propositions', 'p')
+            ->join('q.questionnaire', 'qn')
+            ->join('qn.category', 'c')
+            ->where('c.slug = :slug')
+            ->andWhere('c.user = :user')
+            ->andWhere('qn.difficulty = :difficulty')
+            ->setParameter('slug', $slug)
+            ->setParameter('difficulty', $difficulty)
+            ->setParameter('user', $user)
+            ->setFirstResult(($number - 1) * 4)
+            ->setMaxResults(4)
+            ->orderBy('p.id')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneByIdAndUser($id, $user): ?Questions
+    {
+        return $this->createQueryBuilder('q')
+            ->select('q')
+            ->join('q.questionnaire', 'qn')
+            ->join('qn.category', 'c')
+            ->where('q.id = :id')
+            ->andWhere('c.user = :user')
+            ->setParameter('id', $id)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Questions[] Returns an array of Questions objects
     //     */

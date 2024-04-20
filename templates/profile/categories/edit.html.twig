@@ -35,7 +35,7 @@
 
             </td>
             <td>
-              {# <a class="btn btn-sm btn-primary" href="{{ path('admin_questionnaires_index', {id: questionnaire.id}) }}">Détails</a> #}
+              <a class="btn btn-sm btn-primary" href="{{ path('profile_questionnaires_index', {slug: questionnaire.category.slug, difficulty: questionnaire.difficulty}) }}">Détails</a>
             </td>
           </tr>
         {% endfor %}
