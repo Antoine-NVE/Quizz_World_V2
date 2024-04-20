@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <div class="list-group col-3">
+    {% include "profile/partials/navbar.html.twig" %}
+  </div>
+
+  <div class="col-3 p-1">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center">{{ scores }}</h2>
+        {% if scores == 1 %}
+          <h5 class="card-title text-center">Score effectué</h5>
+        {% else %}
+          <h5 class="card-title text-center">Scores effectués</h5>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-3 p-1">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center">{{ categories }}</h2>
+        {% if categories == 1 %}
+          <h5 class="card-title text-center">Catégorie affichée</h5>
+        {% else %}
+          <h5 class="card-title text-center">Catégories affichées</h5>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock body %}
