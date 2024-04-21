@@ -31,17 +31,7 @@ class UsersFixtures extends Fixture
         self::$userCounter++;
         $manager->persist($admin);
 
-        $user = new Users();
-        $user->setEmail('user@quizzworld.fr');
-        $user->setPassword($this->hasher->hashPassword($admin, 'user'));
-        $user->setPseudo('Antoine');
-        $user->setIsVerified(true);
-
-        $this->addReference('user-' . self::$userCounter, $user);
-        self::$userCounter++;
-        $manager->persist($user);
-
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $user = new Users();
             $user->setEmail($faker->email());
             $user->setPassword($this->hasher->hashPassword($user, 'password'));

@@ -91,6 +91,7 @@ class CategoriesRepository extends ServiceEntityRepository
             ->join('c.questionnaires', 'qn')
             ->leftJoin('qn.questions', 'q')
             ->join('c.user', 'u')
+            ->orderBy('c.id')
             ->getQuery()
             ->getResult();
     }

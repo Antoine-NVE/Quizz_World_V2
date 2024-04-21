@@ -24,7 +24,6 @@ class QuestionsController extends AbstractController
         Request $request
     ): Response {
         $question = $questionsRepository->findWithPropositionsBySlugDifficultyNumberAndUser($slug, $difficulty, $number, $this->getUser());
-        // dd($question);
         if (!$question) throw $this->createNotFoundException('Aucune question trouvée.');
         $propositions = $question->getPropositions();
 
